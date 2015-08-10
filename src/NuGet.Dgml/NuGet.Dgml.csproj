@@ -53,6 +53,7 @@
     <Compile Include="Dgml\dgml.cs">
       <DependentUpon>dgml.xsd</DependentUpon>
     </Compile>
+    <Compile Include="PackageRepositoryExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
