@@ -1,5 +1,4 @@
-﻿using NSubstitute;
-using System;
+﻿using System;
 using System.Linq;
 using Xunit;
 
@@ -19,8 +18,7 @@ namespace NuGet
             [Fact]
             public void ReturnsEmptyForEmptyPackageRepository()
             {
-                var repository = Substitute.For<IPackageRepository>();
-                repository.GetPackages().Returns(Enumerable.Empty<IPackage>().AsQueryable());
+                var repository = StubPackageRepositoryFactory.Create(Enumerable.Empty<IPackage>());
                 Assert.Empty(repository.GetRecentPackages());
             }
 
@@ -32,18 +30,11 @@ namespace NuGet
             [InlineData("2.0.1", "1.0.0;2.0.0-beta;2.0.0-rc;2.0.0;2.0.1")]
             public void ReturnsRecentVersionOfPackage(string expected, string versions)
             {
-                var packages = versions.Split(';').Select(version =>
-                {
-                    var package = Substitute.For<IPackage>();
-                    package.Id.Returns("Package");
-                    package.Version.Returns(new SemanticVersion(version));
-                    return package;
-                });
-
-                var repository = Substitute.For<IPackageRepository>();
-                repository.GetPackages().Returns(packages.AsQueryable());
+                var packages = StubPackageFactory.CreatePackages("Package", versions.Split(';'));
+                var repository = StubPackageRepositoryFactory.Create(packages);
 
                 var recentPackages = repository.GetRecentPackages();
+
                 Assert.Equal(expected, recentPackages.Single().Version.ToString());
             }
         }
