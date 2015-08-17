@@ -13,6 +13,9 @@
 // 
 namespace NuGet.Dgml
 {
+    /// <summary>
+    /// Specifies a directed graph.
+    /// </summary>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -2854,12 +2857,6 @@ namespace NuGet.Dgml
 
         /// <remarks/>
         False,
-
-        /// <remarks/>
-        @true,
-
-        /// <remarks/>
-        @false,
     }
 
     /// <remarks/>
