@@ -16,9 +16,6 @@
     <NuGetExePath Condition="'$(NuGetExePath)' == ''">$(ToolsPath)\nuget.exe</NuGetExePath>
   </PropertyGroup>
   <ItemGroup>
-    <TestAssemblies Include="test\**\bin\$(Configuration)\*.Test.dll" />
-  </ItemGroup>
-  <ItemGroup>
     <NuspecFiles Include="src\*\*.csproj" />
   </ItemGroup>
 
@@ -39,6 +36,9 @@
   <Target Name="Test">
     <Message Text="Testing solution..." Importance="High" />
     <MakeDir Directories="$(TestResultsPath)" />
+    <ItemGroup>
+      <TestAssemblies Include="test\**\bin\$(Configuration)\*.Test.dll" />
+    </ItemGroup>
     <xunit
       Assemblies="@(TestAssemblies)"
       SerializeTestCases="true"
