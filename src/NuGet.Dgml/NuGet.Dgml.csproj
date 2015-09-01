@@ -55,7 +55,10 @@
     </Compile>
     <Compile Include="Dgml\DirectedGraphExtensions.cs" />
     <Compile Include="PackageRepositoryExtensions.cs" />
+    <Compile Include="PackageUpgrade.cs" />
+    <Compile Include="PackageUpgradeAction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UpgradeWalker.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Dgml\dgml.xsd">
