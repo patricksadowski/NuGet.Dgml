@@ -6,6 +6,8 @@
     <title>$title$</title>
     <authors>$author$</authors>
     <owners>$author$</owners>
+    <licenseUrl>https://github.com/patricksadowski/NuGet.Dgml/blob/master/license.txt</licenseUrl>
+    <projectUrl>https://github.com/patricksadowski/NuGet.Dgml/</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
   </metadata>
