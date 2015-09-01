@@ -2,7 +2,7 @@
 {
     internal static class PackageDependencyFactory
     {
-        internal static PackageDependency CreateFixed(string id, string version)
+        internal static PackageDependency CreateExact(string id, string version)
         {
             var versionSpec = new VersionSpec(new SemanticVersion(version));
             return new PackageDependency(id, versionSpec);
@@ -30,7 +30,7 @@
             string minVersion = null,
             string maxVersion = null,
             bool isMinInclusive = true,
-            bool isMaxInclusive = true)
+            bool isMaxInclusive = false)
         {
             var versionSpec = new VersionSpec();
             versionSpec.IsMaxInclusive = isMaxInclusive;
