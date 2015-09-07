@@ -39,7 +39,7 @@ namespace NuGet
             [Fact]
             public void SatisfiedVersionSpecWithMatchingInclusiveMinVersionIsNotUpgradeable()
             {
-                var package = StubPackageFactory.CreatePackage("Package", "1.0.0", PackageDependencyFactory.Create("Dependency", "1.0.0"));
+                var package = StubPackageFactory.CreatePackage("Package", "1.0.0", StubPackageDependencyFactory.Create("Dependency", "1.0.0"));
                 var packageBuilder = new StubPackageBuilder();
                 packageBuilder.AddPackageDefinition("Dependency", "1.0.0");
                 var repository = StubPackageRepositoryFactory.Create(packageBuilder);
@@ -54,7 +54,7 @@ namespace NuGet
             [Fact]
             public void SatisfiedVersionSpecWithNotMatchingInclusiveMinVersionIsUpgradeable()
             {
-                var package = StubPackageFactory.CreatePackage("Package", "1.0.0", PackageDependencyFactory.Create("Dependency", "1.0.0"));
+                var package = StubPackageFactory.CreatePackage("Package", "1.0.0", StubPackageDependencyFactory.Create("Dependency", "1.0.0"));
                 var packageBuilder = new StubPackageBuilder();
                 packageBuilder.AddPackageDefinitions("Dependency", "1.0.0", "2.0.0");
                 var repository = StubPackageRepositoryFactory.Create(packageBuilder);
@@ -72,7 +72,7 @@ namespace NuGet
                 var package = StubPackageFactory.CreatePackage(
                     "Package",
                     "1.0.0",
-                    PackageDependencyFactory.Create("Dependency", "1.0.0", null, false, false));
+                    StubPackageDependencyFactory.Create("Dependency", "1.0.0", null, false, false));
                 var packageBuilder = new StubPackageBuilder();
                 packageBuilder.AddPackageDefinitions("Dependency", "1.0.1-a");
                 var repository = StubPackageRepositoryFactory.Create(packageBuilder);
@@ -87,7 +87,7 @@ namespace NuGet
             [Fact]
             public void IdentifiesReleaseToPrerelease()
             {
-                var package = StubPackageFactory.CreatePackage("Exact", "1.0.0", PackageDependencyFactory.CreateExact("Dependency", "1.0.0"));
+                var package = StubPackageFactory.CreatePackage("Exact", "1.0.0", StubPackageDependencyFactory.CreateExact("Dependency", "1.0.0"));
                 var packageBuilder = new StubPackageBuilder();
                 packageBuilder.AddPackageDefinitions("Dependency", "1.0.0", "1.1.0-pre");
                 var repository = StubPackageRepositoryFactory.Create(packageBuilder);
@@ -102,7 +102,7 @@ namespace NuGet
             [Fact]
             public void IdentifiesReleaseToRelease()
             {
-                var package = StubPackageFactory.CreatePackage("Exact", "1.0.0", PackageDependencyFactory.CreateExact("Dependency", "1.0.0"));
+                var package = StubPackageFactory.CreatePackage("Exact", "1.0.0", StubPackageDependencyFactory.CreateExact("Dependency", "1.0.0"));
                 var packageBuilder = new StubPackageBuilder();
                 packageBuilder.AddPackageDefinitions("Dependency", "1.0.0", "1.1.0");
                 var repository = StubPackageRepositoryFactory.Create(packageBuilder);
@@ -120,7 +120,7 @@ namespace NuGet
                 var package = StubPackageFactory.CreatePackage(
                     "Package",
                     "1.0.0",
-                    PackageDependencyFactory.Create("Dependency", null, "1.0.0", false, false));
+                    StubPackageDependencyFactory.Create("Dependency", null, "1.0.0", false, false));
                 var packageBuilder = new StubPackageBuilder();
                 packageBuilder.AddPackageDefinitions("Dependency", "1.0.0");
                 var repository = StubPackageRepositoryFactory.Create(packageBuilder);
@@ -135,7 +135,7 @@ namespace NuGet
             [Fact]
             public void IdentifiesPrereleaseToPrerelease()
             {
-                var package = StubPackageFactory.CreatePackage("Package", "1.0.0", PackageDependencyFactory.CreateExact("Dependency", "1.0.0-alpha"));
+                var package = StubPackageFactory.CreatePackage("Package", "1.0.0", StubPackageDependencyFactory.CreateExact("Dependency", "1.0.0-alpha"));
                 var packageBuilder = new StubPackageBuilder();
                 packageBuilder.AddPackageDefinitions("Dependency", "1.0.0-alpha", "1.0.0-beta");
                 var repository = StubPackageRepositoryFactory.Create(packageBuilder);
@@ -150,7 +150,7 @@ namespace NuGet
             [Fact]
             public void IdentifiesPrereleaseToRelease()
             {
-                var package = StubPackageFactory.CreatePackage("Exact", "1.0.0", PackageDependencyFactory.CreateExact("Dependency", "1.0.0-alpha"));
+                var package = StubPackageFactory.CreatePackage("Exact", "1.0.0", StubPackageDependencyFactory.CreateExact("Dependency", "1.0.0-alpha"));
                 var packageBuilder = new StubPackageBuilder();
                 packageBuilder.AddPackageDefinitions("Dependency", "1.0.0-alpha", "1.0.0");
                 var repository = StubPackageRepositoryFactory.Create(packageBuilder);

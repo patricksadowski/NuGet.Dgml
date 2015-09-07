@@ -82,7 +82,7 @@
   <ItemGroup>
     <Compile Include="Dgml\DirectedGraphExtensionsFacts.cs" />
     <Compile Include="UpgradeWalkerFacts.cs" />
-    <Compile Include="PackageDependencyFactory.cs" />
+    <Compile Include="StubPackageDependencyFactory.cs" />
     <Compile Include="StubPackageBuilder.cs" />
     <Compile Include="StubPackageFactory.cs" />
     <Compile Include="PackageRepositoryExtensionsFacts.cs" />

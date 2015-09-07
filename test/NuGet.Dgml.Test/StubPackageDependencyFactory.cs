@@ -1,6 +1,6 @@
 ﻿namespace NuGet
 {
-    internal static class PackageDependencyFactory
+    internal static class StubPackageDependencyFactory
     {
         internal static PackageDependency CreateExact(string id, string version)
         {
