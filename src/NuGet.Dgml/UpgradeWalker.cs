@@ -76,7 +76,7 @@ namespace NuGet
 
                 var upgradeType = DetectUpgradeAction(dependency, recentDependencyPackage);
 
-                upgrades.Add(new PackageUpgrade(dependency, upgradeType));
+                upgrades.Add(new PackageUpgrade(dependency, upgradeType, recentDependencyPackage));
             }
 
             return upgrades;

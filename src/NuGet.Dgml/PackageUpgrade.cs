@@ -10,10 +10,12 @@
         /// </summary>
         /// <param name="packageDependency">The package dependency affected by the upgrade.</param>
         /// <param name="action">The upgrade action of the package dependency.</param>
-        public PackageUpgrade(PackageDependency packageDependency, PackageUpgradeAction action)
+        /// <param name="package">The package that can be used to perform the upgrade action on the package dependency.</param>
+        public PackageUpgrade(PackageDependency packageDependency, PackageUpgradeAction action, IPackage package)
         {
             PackageDependency = packageDependency;
             Action = action;
+            Package = package;
         }
 
         /// <summary>
@@ -33,12 +35,20 @@
         }
 
         /// <summary>
+        /// Gets the package that can be used to perform the upgrade action on the package dependency.
+        /// </summary>
+        public IPackage Package
+        {
+            get;
+        }
+
+        /// <summary>
         /// Returns a string that represents the current object.
         /// </summary>
         /// <returns>A string that represents the current object.</returns>
         public override string ToString()
         {
-            return $"{PackageDependency} {Action}";
+            return $"{PackageDependency} {Action} -> {Package.GetFullName()}";
         }
     }
 }

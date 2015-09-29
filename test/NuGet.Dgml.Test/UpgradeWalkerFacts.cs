@@ -40,30 +40,31 @@ namespace NuGet
             public void SatisfiedVersionSpecWithMatchingInclusiveMinVersionIsNotUpgradeable()
             {
                 var package = StubPackageFactory.CreatePackage("Package", "1.0.0", StubPackageDependencyFactory.Create("Dependency", "1.0.0"));
-                var packageBuilder = new StubPackageBuilder();
-                packageBuilder.AddPackageDefinition("Dependency", "1.0.0");
-                var repository = StubPackageRepositoryFactory.Create(packageBuilder);
+                var dependency = StubPackageFactory.CreatePackage("Dependency", "1.0.0");
+                var repository = StubPackageRepositoryFactory.Create(new[] { dependency, });
                 var walker = new UpgradeWalker(repository);
 
                 var upgrades = walker.GetPackageUpgrades(package);
 
                 Assert.Equal(1, upgrades.Count());
                 Assert.Equal(PackageUpgradeAction.None, upgrades.ElementAt(0).Action);
+                Assert.Same(dependency, upgrades.ElementAt(0).Package);
             }
 
             [Fact]
             public void SatisfiedVersionSpecWithNotMatchingInclusiveMinVersionIsUpgradeable()
             {
                 var package = StubPackageFactory.CreatePackage("Package", "1.0.0", StubPackageDependencyFactory.Create("Dependency", "1.0.0"));
-                var packageBuilder = new StubPackageBuilder();
-                packageBuilder.AddPackageDefinitions("Dependency", "1.0.0", "2.0.0");
-                var repository = StubPackageRepositoryFactory.Create(packageBuilder);
+                var dependency1 = StubPackageFactory.CreatePackage("Dependency", "1.0.0");
+                var dependency2 = StubPackageFactory.CreatePackage("Dependency", "2.0.0");
+                var repository = StubPackageRepositoryFactory.Create(new[] { dependency1, dependency2, });
                 var walker = new UpgradeWalker(repository);
 
                 var upgrades = walker.GetPackageUpgrades(package);
 
                 Assert.Equal(1, upgrades.Count());
                 Assert.Equal(PackageUpgradeAction.MinVersion, upgrades.ElementAt(0).Action);
+                Assert.Equal(dependency2, upgrades.ElementAt(0).Package);
             }
 
             [Fact]
@@ -73,45 +74,47 @@ namespace NuGet
                     "Package",
                     "1.0.0",
                     StubPackageDependencyFactory.Create("Dependency", "1.0.0", null, false, false));
-                var packageBuilder = new StubPackageBuilder();
-                packageBuilder.AddPackageDefinitions("Dependency", "1.0.1-a");
-                var repository = StubPackageRepositoryFactory.Create(packageBuilder);
+                var dependency = StubPackageFactory.CreatePackage("Dependency", "1.0.1-a");
+                var repository = StubPackageRepositoryFactory.Create(new[] { dependency, });
                 var walker = new UpgradeWalker(repository);
 
                 var upgrades = walker.GetPackageUpgrades(package);
 
                 Assert.Equal(1, upgrades.Count());
                 Assert.Equal(PackageUpgradeAction.MinVersion, upgrades.ElementAt(0).Action);
+                Assert.Equal(dependency, upgrades.ElementAt(0).Package);
             }
 
             [Fact]
             public void IdentifiesReleaseToPrerelease()
             {
                 var package = StubPackageFactory.CreatePackage("Exact", "1.0.0", StubPackageDependencyFactory.CreateExact("Dependency", "1.0.0"));
-                var packageBuilder = new StubPackageBuilder();
-                packageBuilder.AddPackageDefinitions("Dependency", "1.0.0", "1.1.0-pre");
-                var repository = StubPackageRepositoryFactory.Create(packageBuilder);
+                var dependencyRelease = StubPackageFactory.CreatePackage("Dependency", "1.0.0");
+                var dependencyPrerelease = StubPackageFactory.CreatePackage("Dependency", "1.1.0-pre");
+                var repository = StubPackageRepositoryFactory.Create(new[] { dependencyRelease, dependencyPrerelease, });
                 var walker = new UpgradeWalker(repository);
 
                 var upgrades = walker.GetPackageUpgrades(package);
 
                 Assert.Equal(1, upgrades.Count());
                 Assert.Equal(PackageUpgradeAction.ReleaseToPrerelease, upgrades.ElementAt(0).Action);
+                Assert.Equal(dependencyPrerelease, upgrades.ElementAt(0).Package);
             }
 
             [Fact]
             public void IdentifiesReleaseToRelease()
             {
                 var package = StubPackageFactory.CreatePackage("Exact", "1.0.0", StubPackageDependencyFactory.CreateExact("Dependency", "1.0.0"));
-                var packageBuilder = new StubPackageBuilder();
-                packageBuilder.AddPackageDefinitions("Dependency", "1.0.0", "1.1.0");
-                var repository = StubPackageRepositoryFactory.Create(packageBuilder);
+                var dependency10 = StubPackageFactory.CreatePackage("Dependency", "1.0.0");
+                var dependency11 = StubPackageFactory.CreatePackage("Dependency", "1.1.0");
+                var repository = StubPackageRepositoryFactory.Create(new[] { dependency10, dependency11, });
                 var walker = new UpgradeWalker(repository);
 
                 var upgrades = walker.GetPackageUpgrades(package);
 
                 Assert.Equal(1, upgrades.Count());
                 Assert.Equal(PackageUpgradeAction.ReleaseToRelease, upgrades.ElementAt(0).Action);
+                Assert.Equal(dependency11, upgrades.ElementAt(0).Package);
             }
 
             [Fact]
@@ -121,45 +124,47 @@ namespace NuGet
                     "Package",
                     "1.0.0",
                     StubPackageDependencyFactory.Create("Dependency", null, "1.0.0", false, false));
-                var packageBuilder = new StubPackageBuilder();
-                packageBuilder.AddPackageDefinitions("Dependency", "1.0.0");
-                var repository = StubPackageRepositoryFactory.Create(packageBuilder);
+                var dependency = StubPackageFactory.CreatePackage("Dependency", "1.0.0");
+                var repository = StubPackageRepositoryFactory.Create(new[] { dependency, });
                 var walker = new UpgradeWalker(repository);
 
                 var upgrades = walker.GetPackageUpgrades(package);
 
                 Assert.Equal(1, upgrades.Count());
                 Assert.Equal(PackageUpgradeAction.PrereleaseToRelease, upgrades.ElementAt(0).Action);
+                Assert.Equal(dependency, upgrades.ElementAt(0).Package);
             }
 
             [Fact]
             public void IdentifiesPrereleaseToPrerelease()
             {
                 var package = StubPackageFactory.CreatePackage("Package", "1.0.0", StubPackageDependencyFactory.CreateExact("Dependency", "1.0.0-alpha"));
-                var packageBuilder = new StubPackageBuilder();
-                packageBuilder.AddPackageDefinitions("Dependency", "1.0.0-alpha", "1.0.0-beta");
-                var repository = StubPackageRepositoryFactory.Create(packageBuilder);
+                var dependencyAlpha = StubPackageFactory.CreatePackage("Dependency", "1.0.0-alpha");
+                var dependencyBeta = StubPackageFactory.CreatePackage("Dependency", "1.0.0-beta");
+                var repository = StubPackageRepositoryFactory.Create(new[] { dependencyAlpha, dependencyBeta, });
                 var walker = new UpgradeWalker(repository);
 
                 var upgrades = walker.GetPackageUpgrades(package);
 
                 Assert.Equal(1, upgrades.Count());
                 Assert.Equal(PackageUpgradeAction.PrereleaseToPrerelease, upgrades.ElementAt(0).Action);
+                Assert.Equal(dependencyBeta, upgrades.ElementAt(0).Package);
             }
 
             [Fact]
             public void IdentifiesPrereleaseToRelease()
             {
                 var package = StubPackageFactory.CreatePackage("Exact", "1.0.0", StubPackageDependencyFactory.CreateExact("Dependency", "1.0.0-alpha"));
-                var packageBuilder = new StubPackageBuilder();
-                packageBuilder.AddPackageDefinitions("Dependency", "1.0.0-alpha", "1.0.0");
-                var repository = StubPackageRepositoryFactory.Create(packageBuilder);
+                var dependencyPrerelease = StubPackageFactory.CreatePackage("Dependency", "1.0.0-alpha");
+                var dependencyRelease = StubPackageFactory.CreatePackage("Dependency", "1.0.0");
+                var repository = StubPackageRepositoryFactory.Create(new[] { dependencyPrerelease, dependencyRelease, });
                 var walker = new UpgradeWalker(repository);
 
                 var upgrades = walker.GetPackageUpgrades(package);
 
                 Assert.Equal(1, upgrades.Count());
                 Assert.Equal(PackageUpgradeAction.PrereleaseToRelease, upgrades.ElementAt(0).Action);
+                Assert.Equal(dependencyRelease, upgrades.ElementAt(0).Package);
             }
         }
     }
