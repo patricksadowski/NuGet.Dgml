@@ -5,11 +5,11 @@ VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{337F3F25-316E-445B-A78C-A70B1C21ECC8}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{E3D06EAF-9EA3-4F48-9D4F-FE667F0331C6}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{E3D06EAF-9EA3-4F48-9D4F-FE667F0331C6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuGet.Dgml", "src\NuGet.Dgml\NuGet.Dgml.csproj", "{2CDA2E10-CEC5-4AB9-9D95-3EA31BA6755B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuGet.Dgml.Test", "test\NuGet.Dgml.Test\NuGet.Dgml.Test.csproj", "{FD97D5AB-BAEE-46B1-BA57-A8B489582D9B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuGet.Dgml.Tests", "tests\NuGet.Dgml.Tests\NuGet.Dgml.Tests.csproj", "{FD97D5AB-BAEE-46B1-BA57-A8B489582D9B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

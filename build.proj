@@ -11,7 +11,7 @@
     <SolutionName Condition="'$(SolutionName)' == ''">NuGet.Dgml.sln</SolutionName>
     <Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
     <SolutionDir Condition="'$(SolutionDir)' == '' Or '$(SolutionDir)' == '*Undefined*'">$(MSBuildProjectDirectory)</SolutionDir>
-    <TestResultsPath Condition="'$(TestResultsPath)' == ''">test\TestResults</TestResultsPath>
+    <TestResultsPath Condition="'$(TestResultsPath)' == ''">tests\TestResults</TestResultsPath>
     <ToolsPath Condition="'$(ToolsPath)' == ''">$(SolutionDir)\tools</ToolsPath>
     <NuGetExePath Condition="'$(NuGetExePath)' == ''">$(ToolsPath)\nuget.exe</NuGetExePath>
   </PropertyGroup>
@@ -37,7 +37,7 @@
     <Message Text="Testing solution..." Importance="High" />
     <MakeDir Directories="$(TestResultsPath)" />
     <ItemGroup>
-      <TestAssemblies Include="test\**\bin\$(Configuration)\*.Test.dll" />
+      <TestAssemblies Include="tests\**\bin\$(Configuration)\*.Tests.dll" />
     </ItemGroup>
     <xunit
       Assemblies="@(TestAssemblies)"
