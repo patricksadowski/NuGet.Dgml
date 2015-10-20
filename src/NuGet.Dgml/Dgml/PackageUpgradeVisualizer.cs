@@ -9,7 +9,7 @@ namespace NuGet.Dgml
     /// </summary>
     public class PackageUpgradeVisualizer
     {
-        private readonly DirectedGraph directedGraph;
+        private readonly DirectedGraph _directedGraph;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PackageUpgradeVisualizer"/> class.
@@ -23,7 +23,7 @@ namespace NuGet.Dgml
                 throw new ArgumentNullException(nameof(directedGraph));
             }
 
-            this.directedGraph = directedGraph;
+            _directedGraph = directedGraph;
         }
 
         /// <summary>
@@ -98,13 +98,13 @@ namespace NuGet.Dgml
 
         private void EnsureNodes()
         {
-            if (directedGraph.Nodes == null)
+            if (_directedGraph.Nodes == null)
             {
-                directedGraph.Nodes = new DirectedGraphNode[0];
+                _directedGraph.Nodes = new DirectedGraphNode[0];
             }
         }
 
-        private DirectedGraphNode GetNode(string packageId) => directedGraph.Nodes.FirstOrDefault(n => packageId.Equals(n.Id));
+        private DirectedGraphNode GetNode(string packageId) => _directedGraph.Nodes.FirstOrDefault(n => packageId.Equals(n.Id));
 
         private DirectedGraphNode CreateNode(string packageId)
         {
@@ -115,11 +115,11 @@ namespace NuGet.Dgml
 
         private void AddNode(DirectedGraphNode node)
         {
-            var nodes = directedGraph.Nodes;
+            var nodes = _directedGraph.Nodes;
             var nodeIndex = nodes.Length;
             Array.Resize(ref nodes, nodeIndex + 1);
             nodes[nodeIndex] = node;
-            directedGraph.Nodes = nodes;
+            _directedGraph.Nodes = nodes;
         }
 
         private DirectedGraphLink CreateLink(DirectedGraphNode source, DirectedGraphNode target)
@@ -135,18 +135,18 @@ namespace NuGet.Dgml
         {
             EnsureLinks();
 
-            var links = directedGraph.Links;
+            var links = _directedGraph.Links;
             var linkIndex = links.Length;
             Array.Resize(ref links, linkIndex + 1);
             links[linkIndex] = link;
-            directedGraph.Links = links;
+            _directedGraph.Links = links;
         }
 
         private void EnsureLinks()
         {
-            if (directedGraph.Links == null)
+            if (_directedGraph.Links == null)
             {
-                directedGraph.Links = new DirectedGraphLink[0];
+                _directedGraph.Links = new DirectedGraphLink[0];
             }
         }
 

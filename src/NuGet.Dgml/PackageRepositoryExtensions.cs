@@ -13,6 +13,7 @@ namespace NuGet
         /// </summary>
         /// <param name="packageRepository">The repository.</param>
         /// <returns>The recent packages of the repository.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="packageRepository"/> is <c>null</c>.</exception>
         public static IQueryable<IPackage> GetRecentPackages(this IPackageRepository packageRepository)
         {
             if (packageRepository == null)

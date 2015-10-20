@@ -17,19 +17,19 @@ namespace NuGet.Dgml
 
         public class Visualize
         {
-            private readonly DirectedGraph directedGraph;
-            private readonly PackageUpgradeVisualizer visualizer;
+            private readonly DirectedGraph _directedGraph;
+            private readonly PackageUpgradeVisualizer _visualizer;
 
             public Visualize()
             {
-                directedGraph = new DirectedGraph();
-                visualizer = new PackageUpgradeVisualizer(directedGraph);
+                _directedGraph = new DirectedGraph();
+                _visualizer = new PackageUpgradeVisualizer(_directedGraph);
             }
 
             [Fact]
             public void ThrowsOnNullPackage()
             {
-                Assert.Throws<ArgumentNullException>("package", () => visualizer.Visualize(null, Enumerable.Empty<PackageUpgrade>()));
+                Assert.Throws<ArgumentNullException>("package", () => _visualizer.Visualize(null, Enumerable.Empty<PackageUpgrade>()));
             }
 
             [Fact]
@@ -37,10 +37,10 @@ namespace NuGet.Dgml
             {
                 var package = StubPackageFactory.CreatePackage("A", "1.0.0");
 
-                visualizer.Visualize(package, null);
+                _visualizer.Visualize(package, null);
 
-                Assert.Equal(1, directedGraph.Nodes.Length);
-                Assert.Null(directedGraph.Links);
+                Assert.Equal(1, _directedGraph.Nodes.Length);
+                Assert.Null(_directedGraph.Links);
             }
 
             [Fact]
@@ -48,9 +48,9 @@ namespace NuGet.Dgml
             {
                 var package = CreatePackage();
 
-                visualizer.Visualize(package, Enumerable.Empty<PackageUpgrade>());
+                _visualizer.Visualize(package, Enumerable.Empty<PackageUpgrade>());
 
-                var node = directedGraph.Nodes[0];
+                var node = _directedGraph.Nodes[0];
                 Assert.Equal("A 1.2.4", node.Id);
                 Assert.Equal("A 1.2.4", node.Label);
             }
@@ -58,7 +58,7 @@ namespace NuGet.Dgml
             [Fact]
             public void UsesExistingNodes()
             {
-                directedGraph.Nodes = new[]
+                _directedGraph.Nodes = new[]
                 {
                     new DirectedGraphNode { Id = "A 1.2.4", },
                     new DirectedGraphNode { Id = "B 1.1.0", },
@@ -68,10 +68,10 @@ namespace NuGet.Dgml
                 var packageUpgradeWithPackage = CreatePackageUpgradeWithPackage();
                 var packageUpgradeWithoutPackage = CreatePackageUpgradeWithoutPackage();
 
-                visualizer.Visualize(package, new[] { packageUpgradeWithPackage, packageUpgradeWithoutPackage, });
+                _visualizer.Visualize(package, new[] { packageUpgradeWithPackage, packageUpgradeWithoutPackage, });
 
-                Assert.Equal(3, directedGraph.Nodes.Length);
-                Assert.Equal(2, directedGraph.Links.Length);
+                Assert.Equal(3, _directedGraph.Nodes.Length);
+                Assert.Equal(2, _directedGraph.Links.Length);
             }
 
             [Fact]
@@ -79,9 +79,9 @@ namespace NuGet.Dgml
             {
                 var package = StubPackageFactory.CreatePackage("A", "1.0.0");
 
-                visualizer.Visualize(package, Enumerable.Empty<PackageUpgrade>());
+                _visualizer.Visualize(package, Enumerable.Empty<PackageUpgrade>());
 
-                Assert.Null(directedGraph.Nodes[0].Background);
+                Assert.Null(_directedGraph.Nodes[0].Background);
             }
 
             [Fact]
@@ -89,9 +89,9 @@ namespace NuGet.Dgml
             {
                 var package = StubPackageFactory.CreatePackage("A", "1.0.0-a");
 
-                visualizer.Visualize(package, Enumerable.Empty<PackageUpgrade>());
+                _visualizer.Visualize(package, Enumerable.Empty<PackageUpgrade>());
 
-                Assert.Equal("Gainsboro", directedGraph.Nodes[0].Background);
+                Assert.Equal("Gainsboro", _directedGraph.Nodes[0].Background);
             }
 
             [Fact]
@@ -101,9 +101,9 @@ namespace NuGet.Dgml
                 var packageUpgradeWithPackage = CreatePackageUpgradeWithPackage();
                 var packageUpgradeWithoutPackage = CreatePackageUpgradeWithoutPackage();
 
-                visualizer.Visualize(package, new[] { packageUpgradeWithPackage, packageUpgradeWithoutPackage, });
+                _visualizer.Visualize(package, new[] { packageUpgradeWithPackage, packageUpgradeWithoutPackage, });
 
-                Assert.Equal(3, directedGraph.Nodes.Length);
+                Assert.Equal(3, _directedGraph.Nodes.Length);
             }
 
             [Fact]
@@ -112,9 +112,9 @@ namespace NuGet.Dgml
                 var package = CreatePackage();
                 var packageUpgrade = CreatePackageUpgradeWithPackage();
 
-                visualizer.Visualize(package, new[] { packageUpgrade, });
+                _visualizer.Visualize(package, new[] { packageUpgrade, });
 
-                var node = directedGraph.Nodes.ElementAt(1);
+                var node = _directedGraph.Nodes.ElementAt(1);
                 Assert.Equal("B 1.1.0", node.Id);
                 Assert.Equal("B 1.1.0", node.Label);
             }
@@ -125,9 +125,9 @@ namespace NuGet.Dgml
                 var package = CreatePackage();
                 var packageUpgrade = CreatePackageUpgradeWithoutPackage();
 
-                visualizer.Visualize(package, new[] { packageUpgrade, });
+                _visualizer.Visualize(package, new[] { packageUpgrade, });
 
-                var node = directedGraph.Nodes[1];
+                var node = _directedGraph.Nodes[1];
                 Assert.Equal("C", node.Id);
                 Assert.Equal("C", node.Label);
             }
@@ -139,13 +139,13 @@ namespace NuGet.Dgml
                 var packageUpgradeWithPackage = CreatePackageUpgradeWithPackage();
                 var packageUpgradeWithoutPackage = CreatePackageUpgradeWithoutPackage();
 
-                visualizer.Visualize(package, new[] { packageUpgradeWithPackage, packageUpgradeWithoutPackage, });
+                _visualizer.Visualize(package, new[] { packageUpgradeWithPackage, packageUpgradeWithoutPackage, });
 
-                Assert.Equal("A 1.2.4", directedGraph.Links[0].Source);
-                Assert.Equal("B 1.1.0", directedGraph.Links[0].Target);
+                Assert.Equal("A 1.2.4", _directedGraph.Links[0].Source);
+                Assert.Equal("B 1.1.0", _directedGraph.Links[0].Target);
 
-                Assert.Equal("A 1.2.4", directedGraph.Links[1].Source);
-                Assert.Equal("C", directedGraph.Links[1].Target);
+                Assert.Equal("A 1.2.4", _directedGraph.Links[1].Source);
+                Assert.Equal("C", _directedGraph.Links[1].Target);
             }
 
             [Fact]
@@ -154,9 +154,9 @@ namespace NuGet.Dgml
                 var package = CreatePackage();
                 var packageUpgrade = CreatePackageUpgradeWithPackage();
 
-                visualizer.Visualize(package, new[] { packageUpgrade, });
+                _visualizer.Visualize(package, new[] { packageUpgrade, });
 
-                Assert.Equal("[1.0.0]", directedGraph.Links[0].Label);
+                Assert.Equal("[1.0.0]", _directedGraph.Links[0].Label);
             }
 
             [Fact]
@@ -168,9 +168,9 @@ namespace NuGet.Dgml
                     PackageUpgradeAction.None,
                     null);
 
-                visualizer.Visualize(package, new[] { packageUpgrade, });
+                _visualizer.Visualize(package, new[] { packageUpgrade, });
 
-                Assert.Equal("Black", directedGraph.Links[0].Stroke);
+                Assert.Equal("Black", _directedGraph.Links[0].Stroke);
             }
 
             [Fact]
@@ -182,9 +182,9 @@ namespace NuGet.Dgml
                     PackageUpgradeAction.MinVersion,
                     null);
 
-                visualizer.Visualize(package, new[] { packageUpgrade, });
+                _visualizer.Visualize(package, new[] { packageUpgrade, });
 
-                Assert.Equal("ForestGreen", directedGraph.Links[0].Stroke);
+                Assert.Equal("ForestGreen", _directedGraph.Links[0].Stroke);
             }
 
             [Fact]
@@ -196,9 +196,9 @@ namespace NuGet.Dgml
                     PackageUpgradeAction.ReleaseToRelease,
                     null);
 
-                visualizer.Visualize(package, new[] { packageUpgrade, });
+                _visualizer.Visualize(package, new[] { packageUpgrade, });
 
-                Assert.Equal("Goldenrod", directedGraph.Links[0].Stroke);
+                Assert.Equal("Goldenrod", _directedGraph.Links[0].Stroke);
             }
 
             [Fact]
@@ -210,9 +210,9 @@ namespace NuGet.Dgml
                     PackageUpgradeAction.PrereleaseToRelease,
                     null);
 
-                visualizer.Visualize(package, new[] { packageUpgrade, });
+                _visualizer.Visualize(package, new[] { packageUpgrade, });
 
-                Assert.Equal("DarkOrange", directedGraph.Links[0].Stroke);
+                Assert.Equal("DarkOrange", _directedGraph.Links[0].Stroke);
             }
 
             [Fact]
@@ -224,9 +224,9 @@ namespace NuGet.Dgml
                     PackageUpgradeAction.PrereleaseToPrerelease,
                     null);
 
-                visualizer.Visualize(package, new[] { packageUpgrade, });
+                _visualizer.Visualize(package, new[] { packageUpgrade, });
 
-                Assert.Equal("OrangeRed", directedGraph.Links[0].Stroke);
+                Assert.Equal("OrangeRed", _directedGraph.Links[0].Stroke);
             }
 
             [Fact]
@@ -238,9 +238,9 @@ namespace NuGet.Dgml
                     PackageUpgradeAction.ReleaseToPrerelease,
                     null);
 
-                visualizer.Visualize(package, new[] { packageUpgrade, });
+                _visualizer.Visualize(package, new[] { packageUpgrade, });
 
-                Assert.Equal("Firebrick", directedGraph.Links[0].Stroke);
+                Assert.Equal("Firebrick", _directedGraph.Links[0].Stroke);
             }
 
             private static IPackage CreatePackage()

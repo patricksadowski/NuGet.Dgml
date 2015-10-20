@@ -14,6 +14,8 @@ namespace NuGet.Dgml
         /// </summary>
         /// <param name="graph">The sequence to type as <see cref="XDocument"/>.</param>
         /// <returns>The input sequence typed as <see cref="XDocument"/>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="graph"/> is <c>null</c>.</exception>
+        /// <see cref="XmlSerializer"/>
         public static XDocument AsXDocument(this DirectedGraph graph)
         {
             if (graph == null)
