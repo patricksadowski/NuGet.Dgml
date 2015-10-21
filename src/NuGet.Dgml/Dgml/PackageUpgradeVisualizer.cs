@@ -27,11 +27,52 @@ namespace NuGet.Dgml
         }
 
         /// <summary>
-        /// Visualizes the specified package and its upgrades in the directed graph.
+        /// Visualizes the specified package and its upgrades in the directed graph and estimates the impact of the upgrade.
         /// </summary>
         /// <param name="package">The package to visualize.</param>
         /// <param name="upgrades">The upgrades of the specified package.</param>
         /// <exception cref="ArgumentNullException"><paramref name="package"/> is <c>null</c>.</exception>
+        /// <remarks>
+        /// The method estimates the impact of the upgrade. The links are colored by the estimation.
+        /// The palette ranges from green to red indicating the risk of the upgrade.
+        /// <list type="table">
+        /// <listheader>
+        /// <term><see cref="PackageUpgradeAction"/></term>
+        /// <term>Color</term>
+        /// <term>Risk</term>
+        /// </listheader>
+        /// <item>
+        /// <term><see cref="PackageUpgradeAction.None"/></term>
+        /// <term>Black</term>
+        /// <term>0</term>
+        /// </item>
+        /// <item>
+        /// <term><see cref="PackageUpgradeAction.MinVersion"/></term>
+        /// <term>ForestGreen</term>
+        /// <term>1</term>
+        /// </item>
+        /// <item>
+        /// <term><see cref="PackageUpgradeAction.ReleaseToRelease"/></term>
+        /// <term>Goldenrod</term>
+        /// <term>2</term>
+        /// </item>
+        /// <item>
+        /// <term><see cref="PackageUpgradeAction.PrereleaseToRelease"/></term>
+        /// <term>DarkOrange</term>
+        /// <term>3</term>
+        /// </item>
+        /// <item>
+        /// <term><see cref="PackageUpgradeAction.PrereleaseToPrerelease"/></term>
+        /// <term>OrangeRed</term>
+        /// <term>4</term>
+        /// </item>
+        /// <item>
+        /// <term><see cref="PackageUpgradeAction.ReleaseToPrerelease"/></term>
+        /// <term>Firebrick</term>
+        /// <term>5</term>
+        /// </item>
+        /// </list>
+        /// </remarks>
         public void Visualize(IPackage package, IEnumerable<PackageUpgrade> upgrades)
         {
             if (package == null)
