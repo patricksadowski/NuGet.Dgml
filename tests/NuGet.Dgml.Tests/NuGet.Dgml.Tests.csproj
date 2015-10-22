@@ -68,9 +68,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\src\NuGet.Dgml\NuGet.Dgml.csproj">
       <Project>{2cda2e10-cec5-4ab9-9d95-3ea31ba6755b}</Project>
       <Name>NuGet.Dgml</Name>
@@ -80,6 +77,9 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Common\GlobalAssemblyInfo.cs">
+      <Link>Properties\GlobalAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Dgml\DirectedGraphExtensionsFacts.cs" />
     <Compile Include="Dgml\DirectedGraphFactoryFacts.cs" />
     <Compile Include="Dgml\PackageRepositoryExtensionsFacts.cs" />
