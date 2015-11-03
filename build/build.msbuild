@@ -1,23 +1,29 @@
 ﻿<Project DefaultTargets="BuildAndTest" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
-  <UsingTask
-      AssemblyFile="packages\GitVersionTask.3.0.2\GitVersionTask.dll"
-      TaskName="GitVersionTask.GetVersion"/>
-  <UsingTask
-      AssemblyFile="packages\xunit.runner.msbuild.2.0.0\build\portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.runner.msbuild.dll"
-      TaskName="Xunit.Runner.MSBuild.xunit"/>
-
   <!-- Settings -->
   <PropertyGroup>
-    <SolutionName Condition="'$(SolutionName)' == ''">NuGet.Dgml.sln</SolutionName>
     <Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
-    <SolutionDir Condition="'$(SolutionDir)' == '' Or '$(SolutionDir)' == '*Undefined*'">$(MSBuildProjectDirectory)</SolutionDir>
-    <TestResultsPath Condition="'$(TestResultsPath)' == ''">tests\TestResults</TestResultsPath>
-    <ToolsPath Condition="'$(ToolsPath)' == ''">$(SolutionDir)\tools</ToolsPath>
-    <NuGetExePath Condition="'$(NuGetExePath)' == ''">$(ToolsPath)\nuget.exe</NuGetExePath>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootDir Condition="'$(RootDir)' == '' Or '$(RootDir)' == '*Undefined*'">$(MSBuildProjectDirectory)\..\</RootDir>
+    <SolutionName Condition="'$(SolutionName)' == ''">NuGet.Dgml.sln</SolutionName>
+    <SolutionPath Condition="'$(SolutionPath)' == ''">$(RootDir)\$(SolutionName)</SolutionPath>
+    <SourceDir Condition="'$(SourceDir)' == ''">$(RootDir)\src</SourceDir>
+    <TestsDir Condition="'$(TestsDir)' == ''">$(RootDir)\tests</TestsDir>
+    <TestResultsDir Condition="'$(TestResultsDir)' == ''">$(TestsDir)\TestResults</TestResultsDir>
+    <PackagesDir Condition="'$(PackagesDir)' == ''">$(RootDir)\packages</PackagesDir>
+    <ToolsDir Condition="'$(ToolsDir)' == ''">$(RootDir)\build</ToolsDir>
+    <NuGetExePath Condition="'$(NuGetExePath)' == ''">$(ToolsDir)\nuget.exe</NuGetExePath>
   </PropertyGroup>
   <ItemGroup>
-    <NuspecFiles Include="src\*\*.csproj" />
+    <NuspecFiles Include="$(SourceDir)\*\*.csproj" />
   </ItemGroup>
+
+  <UsingTask
+      AssemblyFile="$(PackagesDir)\GitVersionTask.3.0.2\GitVersionTask.dll"
+      TaskName="GitVersionTask.GetVersion"/>
+  <UsingTask
+      AssemblyFile="$(PackagesDir)\xunit.runner.msbuild.2.0.0\build\portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.runner.msbuild.dll"
+      TaskName="Xunit.Runner.MSBuild.xunit"/>
 
   <!-- Targets -->
   <Target Name="Publish" DependsOnTargets="BuildAndTest;CreatePackages" />
@@ -25,30 +31,30 @@
 
   <Target Name="PackageRestore" DependsOnTargets="DownloadNuGet">
     <Message Text="Restoring NuGet packages..." Importance="High" />
-    <Exec Command='"$(NuGetExePath)" restore "$(SolutionDir)\$(SolutionName)" -NonInteractive' />
+    <Exec Command='"$(NuGetExePath)" restore "$(SolutionPath)" -NonInteractive' />
   </Target>
 
   <Target Name="Build" DependsOnTargets="PackageRestore">
     <Message Text="Building solution..." Importance="High" />
-    <MSBuild Projects="$(SolutionName)" Targets="Rebuild" Properties="Configuration=$(Configuration)"/>
+    <MSBuild Projects="$(SolutionPath)" Targets="Rebuild" Properties="Configuration=$(Configuration)"/>
   </Target>
 
   <Target Name="Test">
     <Message Text="Testing solution..." Importance="High" />
-    <MakeDir Directories="$(TestResultsPath)" />
+    <MakeDir Directories="$(TestResultsDir)" />
     <ItemGroup>
-      <TestAssemblies Include="tests\**\bin\$(Configuration)\*.Tests.dll" />
+      <TestAssemblies Include="$(TestsDir)\**\bin\$(Configuration)\*.Tests.dll" />
     </ItemGroup>
     <xunit
       Assemblies="@(TestAssemblies)"
       SerializeTestCases="true"
-      Xml="$(TestResultsPath)\$(PROCESSOR_ARCHITECTURE).xml"
-      Html="$(TestResultsPath)\$(PROCESSOR_ARCHITECTURE).html" />
+      Xml="$(TestResultsDir)\$(PROCESSOR_ARCHITECTURE).xml"
+      Html="$(TestResultsDir)\$(PROCESSOR_ARCHITECTURE).html" />
   </Target>
 
   <Target Name="CreatePackages">
     <Message Text="Creating NuGet packages..." Importance="High" />
-    <GetVersion SolutionDirectory="$(SolutionDir)">
+    <GetVersion SolutionDirectory="$(RootDir)">
       <Output TaskParameter="NuGetVersion" PropertyName="GitVersion_NuGetVersion" />
     </GetVersion>
 
@@ -56,7 +62,7 @@
   </Target>
 
   <Target Name="DownloadNuGet">
-    <MakeDir Directories="$(ToolsPath)" />
+    <MakeDir Directories="$(ToolsDir)" />
     <DownloadFile FileName="$(NuGetExePath)" Address="https://www.nuget.org/nuget.exe" Condition="!Exists('$(NuGetExePath)')" />
   </Target>
 

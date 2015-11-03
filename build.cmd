@@ -24,8 +24,8 @@ if not defined VisualStudioVersion (
 :EnvSet
 
 :: Log build command line
-set _buildproj=%~dp0build.proj
-set _buildlog=%~dp0msbuild.log
+set _buildproj=%~dp0build\build.msbuild
+set _buildlog=%~dp0build\msbuild.log
 set _buildprefix=echo
 set _buildpostfix=^> "%_buildlog%"
 call :build %*
