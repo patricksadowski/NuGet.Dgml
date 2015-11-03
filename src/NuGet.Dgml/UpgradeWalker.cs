@@ -85,7 +85,11 @@ namespace NuGet
         private static PackageUpgradeAction DetectUpgradeAction(PackageDependency dependency, IPackage recentPackage)
         {
             var upgradeType = PackageUpgradeAction.None;
-            if (dependency.VersionSpec.Satisfies(recentPackage.Version))
+            if (recentPackage == null)
+            {
+                upgradeType = PackageUpgradeAction.Unknown;
+            }
+            else if (dependency.VersionSpec.Satisfies(recentPackage.Version))
             {
                 upgradeType = IsMinVersionUpgraeable(dependency, recentPackage)
                         ? PackageUpgradeAction.MinVersion

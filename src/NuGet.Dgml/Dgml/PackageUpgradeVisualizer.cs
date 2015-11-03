@@ -33,6 +33,7 @@ namespace NuGet.Dgml
         /// <param name="upgrades">The upgrades of the specified package.</param>
         /// <exception cref="ArgumentNullException"><paramref name="package"/> is <c>null</c>.</exception>
         /// <remarks>
+        /// <para>
         /// The method estimates the impact of the upgrade. The links are colored by the estimation.
         /// The palette ranges from green to red indicating the risk of the upgrade.
         /// <list type="table">
@@ -71,7 +72,16 @@ namespace NuGet.Dgml
         /// <term>Firebrick</term>
         /// <term>5</term>
         /// </item>
+        /// <item>
+        /// <term><see cref="PackageUpgradeAction.Unknown"/></term>
+        /// <term>DarkGray</term>
+        /// <term>-</term>
+        /// </item>
         /// </list>
+        /// </para>
+        /// <para>
+        /// An undiscoverable package that is referenced by a package dependency has a red border.
+        /// </para>
         /// </remarks>
         public void Visualize(IPackage package, IEnumerable<PackageUpgrade> upgrades)
         {
@@ -88,6 +98,7 @@ namespace NuGet.Dgml
                 foreach (var upgrade in upgrades)
                 {
                     var dependencyNode = EnsureDependencyNode(upgrade);
+                    ConfigureDependencyNode(dependencyNode, upgrade);
                     var link = CreateLink(packageNode, dependencyNode);
                     ConfigureLink(link, upgrade);
                 }
@@ -163,6 +174,15 @@ namespace NuGet.Dgml
             _directedGraph.Nodes = nodes;
         }
 
+        private void ConfigureDependencyNode(DirectedGraphNode node, PackageUpgrade upgrade)
+        {
+            if (upgrade.Package == null)
+            {
+                node.Stroke = "Red";
+                node.StrokeThickness = "2";
+            }
+        }
+
         private DirectedGraphLink CreateLink(DirectedGraphNode source, DirectedGraphNode target)
         {
             var link = new DirectedGraphLink();
@@ -213,6 +233,8 @@ namespace NuGet.Dgml
                     return "OrangeRed";
                 case PackageUpgradeAction.ReleaseToPrerelease:
                     return "Firebrick";
+                case PackageUpgradeAction.Unknown:
+                    return "DarkGray";
             }
             return null;
         }

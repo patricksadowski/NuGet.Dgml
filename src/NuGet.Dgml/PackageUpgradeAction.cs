@@ -34,5 +34,10 @@
         /// The unsatisfied version specification can be upgraded from release to a recent prerelease.
         /// </summary>
         ReleaseToPrerelease = 5,
+
+        /// <summary>
+        /// The satisfaction of the version specification can't be determined.
+        /// </summary>
+        Unknown = 255,
     }
 }

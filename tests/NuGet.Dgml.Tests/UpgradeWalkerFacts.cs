@@ -166,6 +166,20 @@ namespace NuGet
                 Assert.Equal(PackageUpgradeAction.PrereleaseToRelease, upgrades.ElementAt(0).Action);
                 Assert.Equal(dependencyRelease, upgrades.ElementAt(0).Package);
             }
+
+            [Fact]
+            public void UndiscoverablePackageOfPackageDependencyIsUnknownUpgradeAction()
+            {
+                var package = StubPackageFactory.CreatePackage("Exact", "1.0.0", StubPackageDependencyFactory.CreateExact("Dependency", "1.0.0"));
+                var repository = StubPackageRepositoryFactory.Create(Enumerable.Empty<IPackage>());
+                var walker = new UpgradeWalker(repository);
+
+                var upgrades = walker.GetPackageUpgrades(package);
+
+                Assert.Equal(1, upgrades.Count());
+                Assert.Equal(PackageUpgradeAction.Unknown, upgrades.ElementAt(0).Action);
+                Assert.Null(upgrades.ElementAt(0).Package);
+            }
         }
     }
 }

@@ -133,6 +133,19 @@ namespace NuGet.Dgml
             }
 
             [Fact]
+            public void NodeOfPackageDependencyHasRed2PixelBorder()
+            {
+                var package = CreatePackage();
+                var packageUpgrade = CreatePackageUpgradeWithoutPackage();
+
+                _visualizer.Visualize(package, new[] { packageUpgrade, });
+
+                var node = _directedGraph.Nodes[1];
+                Assert.Equal("Red", node.Stroke);
+                Assert.Equal("2", node.StrokeThickness);
+            }
+
+            [Fact]
             public void ConnectsNodeOfPackageWithNodeOfDependency()
             {
                 var package = CreatePackage();
@@ -241,6 +254,20 @@ namespace NuGet.Dgml
                 _visualizer.Visualize(package, new[] { packageUpgrade, });
 
                 Assert.Equal("Firebrick", _directedGraph.Links[0].Stroke);
+            }
+
+            [Fact]
+            public void UnkownUpgradeActionIsDarkGrayLink()
+            {
+                var package = StubPackageFactory.CreatePackage("A", "1.0.0");
+                var packageUpgrade = new PackageUpgrade(
+                    StubPackageDependencyFactory.CreateExact("B", "1.0.0"),
+                    PackageUpgradeAction.Unknown,
+                    null);
+
+                _visualizer.Visualize(package, new[] { packageUpgrade, });
+
+                Assert.Equal("DarkGray", _directedGraph.Links[0].Stroke);
             }
 
             private static IPackage CreatePackage()
