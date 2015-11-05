@@ -55,6 +55,7 @@
     </Compile>
     <Compile Include="Dgml\DirectedGraphExtensions.cs" />
     <Compile Include="Dgml\DirectedGraphFactory.cs" />
+    <Compile Include="Dgml\PackageExtensions.cs" />
     <Compile Include="Dgml\PackageRepositoryExtensions.cs" />
     <Compile Include="Dgml\PackageUpgradeVisualizer.cs" />
     <Compile Include="PackageRepositoryExtensions.cs" />

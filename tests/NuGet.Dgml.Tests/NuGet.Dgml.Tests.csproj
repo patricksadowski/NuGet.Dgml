@@ -82,6 +82,7 @@
     </Compile>
     <Compile Include="Dgml\DirectedGraphExtensionsFacts.cs" />
     <Compile Include="Dgml\DirectedGraphFactoryFacts.cs" />
+    <Compile Include="Dgml\PackageExtensionsFacts.cs" />
     <Compile Include="Dgml\PackageRepositoryExtensionsFacts.cs" />
     <Compile Include="Dgml\PackageUpgradeVisualizerFacts.cs" />
     <Compile Include="PackageUpgradeFacts.cs" />

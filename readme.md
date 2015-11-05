@@ -31,6 +31,6 @@ directedGraph.AsXDocument().Save("C:\My Package Repository.dgml");
 The functions are implemented as extension methods. These methods use public
 types included in the library.
 
-| Extension method for type: | IPackageRepository | IPackageMetadata |
+| Extension method for type: | IPackageRepository | IPackage |
 |:--|:-:|:-:|
-| VisualizeUpgradeableDependencies | Implemented  | *Planned* |
+| VisualizeUpgradeableDependencies | Implemented  | Implemented |
