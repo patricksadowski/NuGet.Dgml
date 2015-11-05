@@ -22,9 +22,9 @@ Sample:
 using NuGet;
 using NuGet.Dgml;
 
-var repository = PackageRepositoryFactory.Default.CreateRepository("N:\My Package Repository\");
+var repository = PackageRepositoryFactory.Default.CreateRepository(@"N:\My Package Repository\");
 var directedGraph = repository.VisualizeUpgradeableDependencies();
-directedGraph.AsXDocument().Save("C:\My Package Repository.dgml");
+directedGraph.AsXDocument().Save(@"C:\My Package Repository.dgml");
 ```
 # Functions
 
