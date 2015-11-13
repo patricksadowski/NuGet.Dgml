@@ -34,3 +34,11 @@ types included in the library.
 | Extension method for type: | IPackageRepository | IPackage |
 |:--|:-:|:-:|
 | VisualizeUpgradeableDependencies | Implemented  | Implemented |
+
+# Applications supporting DGML
+
+- Visual Studio 2010(+): viewer and visual editor
+
+# Contributing
+
+Just follow the [GitHub Flow](https://guides.github.com/introduction/flow/).
