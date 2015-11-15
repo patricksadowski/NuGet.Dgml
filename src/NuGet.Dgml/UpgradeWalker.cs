@@ -91,7 +91,7 @@ namespace NuGet
             }
             else if (dependency.VersionSpec.Satisfies(recentPackage.Version))
             {
-                upgradeType = IsMinVersionUpgraeable(dependency, recentPackage)
+                upgradeType = IsMinVersionUpgradeable(dependency, recentPackage)
                         ? PackageUpgradeAction.MinVersion
                         : PackageUpgradeAction.None;
             }
@@ -112,7 +112,7 @@ namespace NuGet
             return upgradeType;
         }
 
-        private static bool IsMinVersionUpgraeable(PackageDependency dependency, IPackage recentPackage)
+        private static bool IsMinVersionUpgradeable(PackageDependency dependency, IPackage recentPackage)
         {
             return (dependency.VersionSpec.MinVersion != null) && (dependency.VersionSpec.MinVersion < recentPackage.Version);
         }
