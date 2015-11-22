@@ -18,7 +18,7 @@ namespace NuGet.Dgml
 
             public VisualizeUpgradeableDependenciesIPackageIPackageRepositoryFrameworkName()
             {
-                _targetFramework = new FrameworkName(".NET Framework, Version=4.0");
+                _targetFramework = new StubFrameworkNameFactory().NET45();
             }
 
             [Fact]

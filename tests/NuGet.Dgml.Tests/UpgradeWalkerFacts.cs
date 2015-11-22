@@ -23,7 +23,7 @@ namespace NuGet
             {
                 Assert.Throws<ArgumentNullException>(
                     "packageRepository",
-                    () => new UpgradeWalker(null, new FrameworkName(".NET Framework, Version=4.0")));
+                    () => new UpgradeWalker(null, new StubFrameworkNameFactory().NET45()));
             }
         }
 
