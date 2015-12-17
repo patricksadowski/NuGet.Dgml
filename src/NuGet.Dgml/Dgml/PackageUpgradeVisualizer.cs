@@ -10,6 +10,7 @@ namespace NuGet.Dgml
     public class PackageUpgradeVisualizer
     {
         private readonly DirectedGraph _directedGraph;
+        private readonly PackageUpgradePalette _palette;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PackageUpgradeVisualizer"/> class.
@@ -17,13 +18,33 @@ namespace NuGet.Dgml
         /// <param name="directedGraph">The directed graph used to visualize package upgrades.</param>
         /// <exception cref="ArgumentNullException"><paramref name="directedGraph"/> is <c>null</c>.</exception>
         public PackageUpgradeVisualizer(DirectedGraph directedGraph)
+            : this(directedGraph, new PackageUpgradePalette())
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PackageUpgradeVisualizer"/> class.
+        /// </summary>
+        /// <param name="directedGraph">The directed graph used to visualize package upgrades.</param>
+        /// <param name="palette">The color palette to color nodes and links.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="directedGraph"/> is <c>null</c>.
+        /// - or -
+        /// <paramref name="palette"/> is <c>null</c>.
+        /// </exception>
+        public PackageUpgradeVisualizer(DirectedGraph directedGraph, PackageUpgradePalette palette)
         {
             if (directedGraph == null)
             {
                 throw new ArgumentNullException(nameof(directedGraph));
             }
+            if (palette == null)
+            {
+                throw new ArgumentNullException(nameof(palette));
+            }
 
             _directedGraph = directedGraph;
+            _palette = palette;
         }
 
         /// <summary>
@@ -32,57 +53,6 @@ namespace NuGet.Dgml
         /// <param name="package">The package to visualize.</param>
         /// <param name="upgrades">The upgrades of the specified package.</param>
         /// <exception cref="ArgumentNullException"><paramref name="package"/> is <c>null</c>.</exception>
-        /// <remarks>
-        /// <para>
-        /// The method estimates the impact of the upgrade. The links are colored by the estimation.
-        /// The palette ranges from green to red indicating the risk of the upgrade.
-        /// <list type="table">
-        /// <listheader>
-        /// <term><see cref="PackageUpgradeAction"/></term>
-        /// <term>Color</term>
-        /// <term>Risk</term>
-        /// </listheader>
-        /// <item>
-        /// <term><see cref="PackageUpgradeAction.None"/></term>
-        /// <term>Black</term>
-        /// <term>0</term>
-        /// </item>
-        /// <item>
-        /// <term><see cref="PackageUpgradeAction.MinVersion"/></term>
-        /// <term>ForestGreen</term>
-        /// <term>1</term>
-        /// </item>
-        /// <item>
-        /// <term><see cref="PackageUpgradeAction.ReleaseToRelease"/></term>
-        /// <term>Goldenrod</term>
-        /// <term>2</term>
-        /// </item>
-        /// <item>
-        /// <term><see cref="PackageUpgradeAction.PrereleaseToRelease"/></term>
-        /// <term>DarkOrange</term>
-        /// <term>3</term>
-        /// </item>
-        /// <item>
-        /// <term><see cref="PackageUpgradeAction.PrereleaseToPrerelease"/></term>
-        /// <term>OrangeRed</term>
-        /// <term>4</term>
-        /// </item>
-        /// <item>
-        /// <term><see cref="PackageUpgradeAction.ReleaseToPrerelease"/></term>
-        /// <term>Firebrick</term>
-        /// <term>5</term>
-        /// </item>
-        /// <item>
-        /// <term><see cref="PackageUpgradeAction.Unknown"/></term>
-        /// <term>DarkGray</term>
-        /// <term>-</term>
-        /// </item>
-        /// </list>
-        /// </para>
-        /// <para>
-        /// An undiscoverable package that is referenced by a package dependency has a red border.
-        /// </para>
-        /// </remarks>
         public void Visualize(IPackage package, IEnumerable<PackageUpgrade> upgrades)
         {
             if (package == null)
@@ -111,11 +81,11 @@ namespace NuGet.Dgml
             return EnsureNode(nodeId);
         }
 
-        private static void ConfigurePackageNode(DirectedGraphNode node, IPackage package)
+        private void ConfigurePackageNode(DirectedGraphNode node, IPackage package)
         {
             if (!package.IsReleaseVersion())
             {
-                node.Background = "Gainsboro";
+                node.Background = _palette.PrereleaseColor;
             }
         }
 
@@ -178,7 +148,7 @@ namespace NuGet.Dgml
         {
             if (upgrade.Package == null)
             {
-                node.Stroke = "Red";
+                node.Stroke = _palette.MissingPackageColor;
                 node.StrokeThickness = "2";
             }
         }
@@ -214,29 +184,7 @@ namespace NuGet.Dgml
         private void ConfigureLink(DirectedGraphLink link, PackageUpgrade upgrade)
         {
             link.Label = upgrade.PackageDependency.VersionSpec.ToString();
-            link.Stroke = GetStroke(upgrade.Action);
-        }
-
-        private string GetStroke(PackageUpgradeAction action)
-        {
-            switch (action)
-            {
-                case PackageUpgradeAction.None:
-                    return "Black";
-                case PackageUpgradeAction.MinVersion:
-                    return "ForestGreen";
-                case PackageUpgradeAction.ReleaseToRelease:
-                    return "Goldenrod";
-                case PackageUpgradeAction.PrereleaseToRelease:
-                    return "DarkOrange";
-                case PackageUpgradeAction.PrereleaseToPrerelease:
-                    return "OrangeRed";
-                case PackageUpgradeAction.ReleaseToPrerelease:
-                    return "Firebrick";
-                case PackageUpgradeAction.Unknown:
-                    return "DarkGray";
-            }
-            return null;
+            link.Stroke = _palette.UpgradeActionPalette[upgrade.Action];
         }
     }
 }

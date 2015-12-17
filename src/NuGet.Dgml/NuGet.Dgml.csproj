@@ -59,8 +59,10 @@
     <Compile Include="Dgml\DirectedGraphFactory.cs" />
     <Compile Include="Dgml\PackageExtensions.cs" />
     <Compile Include="Dgml\PackageRepositoryExtensions.cs" />
+    <Compile Include="Dgml\PackageUpgradeActionPalette.cs" />
     <Compile Include="Dgml\PackageUpgradeVisualizer.cs" />
     <Compile Include="Dgml\IEnumerableIPackageExtensions.cs" />
+    <Compile Include="Dgml\PackageUpgradePalette.cs" />
     <Compile Include="PackageRepositoryExtensions.cs" />
     <Compile Include="PackageUpgrade.cs" />
     <Compile Include="PackageUpgradeAction.cs" />

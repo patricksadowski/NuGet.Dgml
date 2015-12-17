@@ -85,6 +85,8 @@
     <Compile Include="Dgml\IEnumerableIPackageExtensionsFacts.cs" />
     <Compile Include="Dgml\PackageExtensionsFacts.cs" />
     <Compile Include="Dgml\PackageRepositoryExtensionsFacts.cs" />
+    <Compile Include="Dgml\PackageUpgradeActionPaletteFacts.cs" />
+    <Compile Include="Dgml\PackageUpgradePaletteFacts.cs" />
     <Compile Include="Dgml\PackageUpgradeVisualizerFacts.cs" />
     <Compile Include="PackageUpgradeFacts.cs" />
     <Compile Include="StubFrameworkNameFactory.cs" />

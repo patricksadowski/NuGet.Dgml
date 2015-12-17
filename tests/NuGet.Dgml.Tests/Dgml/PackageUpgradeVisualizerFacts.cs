@@ -6,12 +6,28 @@ namespace NuGet.Dgml
 {
     public class PackageUpgradeVisualizerFacts
     {
-        public class Constructor
+        public class ConstructorDirectedGraph
         {
             [Fact]
             public void ThrowsOnNull()
             {
                 Assert.Throws<ArgumentNullException>("directedGraph", () => new PackageUpgradeVisualizer(null));
+            }
+        }
+
+        public class ConstructorDirectedGraphPackageUpgradePalette
+        {
+            [Fact]
+            public void ThrowsOnNullDirectedGraph()
+            {
+                Assert.Throws<ArgumentNullException>("directedGraph", () => new PackageUpgradeVisualizer(null, new PackageUpgradePalette()));
+            }
+
+            [Fact]
+            public void ThrowsOnNullPackageUpgradePalette()
+            {
+                var directedGraph = new DirectedGraph();
+                Assert.Throws<ArgumentNullException>("palette", () => new PackageUpgradeVisualizer(directedGraph, null));
             }
         }
 
@@ -85,13 +101,17 @@ namespace NuGet.Dgml
             }
 
             [Fact]
-            public void PrereleasePackageIsGainsboroNode()
+            public void UsesPrereleaseColorOfPaletteAsBackgroundForNodeOfPrereleasePackage()
             {
+                var packageUpgradePalette = new PackageUpgradePalette();
+                const string expected = "myColor";
+                packageUpgradePalette.PrereleaseColor = expected;
+                var visualizer = new PackageUpgradeVisualizer(_directedGraph, packageUpgradePalette);
                 var package = StubPackageFactory.CreatePackage("A", "1.0.0-a");
 
-                _visualizer.Visualize(package, Enumerable.Empty<PackageUpgrade>());
+                visualizer.Visualize(package, Enumerable.Empty<PackageUpgrade>());
 
-                Assert.Equal("Gainsboro", _directedGraph.Nodes[0].Background);
+                Assert.Equal(expected, _directedGraph.Nodes[0].Background);
             }
 
             [Fact]
@@ -133,7 +153,7 @@ namespace NuGet.Dgml
             }
 
             [Fact]
-            public void NodeOfPackageDependencyHasRed2PixelBorder()
+            public void NodeOfPackageDependencyHas2PixelBorder()
             {
                 var package = CreatePackage();
                 var packageUpgrade = CreatePackageUpgradeWithoutPackage();
@@ -141,8 +161,24 @@ namespace NuGet.Dgml
                 _visualizer.Visualize(package, new[] { packageUpgrade, });
 
                 var node = _directedGraph.Nodes[1];
-                Assert.Equal("Red", node.Stroke);
                 Assert.Equal("2", node.StrokeThickness);
+            }
+
+            [Fact]
+            public void UsesMissingPackageColorOfPaletteAsStrokeForNodeOfPackageDependency()
+            {
+                var packageUpgradePalette = new PackageUpgradePalette();
+                const string expected = "myColor";
+                packageUpgradePalette.MissingPackageColor = expected;
+                var visualizer = new PackageUpgradeVisualizer(_directedGraph, packageUpgradePalette);
+
+                var package = CreatePackage();
+                var packageUpgrade = CreatePackageUpgradeWithoutPackage();
+
+                visualizer.Visualize(package, new[] { packageUpgrade, });
+
+                var node = _directedGraph.Nodes[1];
+                Assert.Equal(expected, node.Stroke);
             }
 
             [Fact]
@@ -173,101 +209,22 @@ namespace NuGet.Dgml
             }
 
             [Fact]
-            public void NoneUpgradeActionIsBlackLink()
+            public void UsesUpgradeActionPaletteAsStrokeForLink()
             {
-                var package = StubPackageFactory.CreatePackage("A", "1.0.0");
-                var packageUpgrade = new PackageUpgrade(
-                    StubPackageDependencyFactory.CreateExact("B", "1.0.0"),
-                    PackageUpgradeAction.None,
-                    null);
-
-                _visualizer.Visualize(package, new[] { packageUpgrade, });
-
-                Assert.Equal("Black", _directedGraph.Links[0].Stroke);
-            }
-
-            [Fact]
-            public void MinVersionUpgradeActionIsForestGreenLink()
-            {
-                var package = StubPackageFactory.CreatePackage("A", "1.0.0");
-                var packageUpgrade = new PackageUpgrade(
-                    StubPackageDependencyFactory.CreateExact("B", "1.0.0"),
-                    PackageUpgradeAction.MinVersion,
-                    null);
-
-                _visualizer.Visualize(package, new[] { packageUpgrade, });
-
-                Assert.Equal("ForestGreen", _directedGraph.Links[0].Stroke);
-            }
-
-            [Fact]
-            public void ReleaseToReleaseUpgradeActionIsGoldenrodLink()
-            {
-                var package = StubPackageFactory.CreatePackage("A", "1.0.0");
-                var packageUpgrade = new PackageUpgrade(
-                    StubPackageDependencyFactory.CreateExact("B", "1.0.0"),
-                    PackageUpgradeAction.ReleaseToRelease,
-                    null);
-
-                _visualizer.Visualize(package, new[] { packageUpgrade, });
-
-                Assert.Equal("Goldenrod", _directedGraph.Links[0].Stroke);
-            }
-
-            [Fact]
-            public void PrereleaseToReleaseUpgradeActionIsDarkOrangeLink()
-            {
+                var packageUpgradeActionPalette = new PackageUpgradeActionPalette();
+                const string expected = "myColor";
+                packageUpgradeActionPalette[PackageUpgradeAction.PrereleaseToRelease] = expected;
+                var packageUpgradePalette = new PackageUpgradePalette(packageUpgradeActionPalette);
+                var visualizer = new PackageUpgradeVisualizer(_directedGraph, packageUpgradePalette);
                 var package = StubPackageFactory.CreatePackage("A", "1.0.0");
                 var packageUpgrade = new PackageUpgrade(
                     StubPackageDependencyFactory.CreateExact("B", "1.0.0"),
                     PackageUpgradeAction.PrereleaseToRelease,
                     null);
 
-                _visualizer.Visualize(package, new[] { packageUpgrade, });
+                visualizer.Visualize(package, new[] { packageUpgrade, });
 
-                Assert.Equal("DarkOrange", _directedGraph.Links[0].Stroke);
-            }
-
-            [Fact]
-            public void PrereleaseToPrereleaseUpgradeActionIsOrangeRedLink()
-            {
-                var package = StubPackageFactory.CreatePackage("A", "1.0.0");
-                var packageUpgrade = new PackageUpgrade(
-                    StubPackageDependencyFactory.CreateExact("B", "1.0.0"),
-                    PackageUpgradeAction.PrereleaseToPrerelease,
-                    null);
-
-                _visualizer.Visualize(package, new[] { packageUpgrade, });
-
-                Assert.Equal("OrangeRed", _directedGraph.Links[0].Stroke);
-            }
-
-            [Fact]
-            public void ReleaseToPrereleaseUpgradeActionIsFirebrickLink()
-            {
-                var package = StubPackageFactory.CreatePackage("A", "1.0.0");
-                var packageUpgrade = new PackageUpgrade(
-                    StubPackageDependencyFactory.CreateExact("B", "1.0.0"),
-                    PackageUpgradeAction.ReleaseToPrerelease,
-                    null);
-
-                _visualizer.Visualize(package, new[] { packageUpgrade, });
-
-                Assert.Equal("Firebrick", _directedGraph.Links[0].Stroke);
-            }
-
-            [Fact]
-            public void UnkownUpgradeActionIsDarkGrayLink()
-            {
-                var package = StubPackageFactory.CreatePackage("A", "1.0.0");
-                var packageUpgrade = new PackageUpgrade(
-                    StubPackageDependencyFactory.CreateExact("B", "1.0.0"),
-                    PackageUpgradeAction.Unknown,
-                    null);
-
-                _visualizer.Visualize(package, new[] { packageUpgrade, });
-
-                Assert.Equal("DarkGray", _directedGraph.Links[0].Stroke);
+                Assert.Equal(expected, _directedGraph.Links[0].Stroke);
             }
 
             private static IPackage CreatePackage()
