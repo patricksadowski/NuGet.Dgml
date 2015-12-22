@@ -8,7 +8,16 @@ namespace NuGet.Dgml
     {
         public class VisualizeUpgradeableDependenciesIPackageRepository
         {
-            /* No tests necessary because the method calls an tested overload. */
+            [Fact]
+            public void ThrowsOnNullPackageRepository()
+            {
+                IPackageRepository repository = null;
+                Assert.Throws<ArgumentNullException>(
+                    "packageRepository",
+                    () => repository.VisualizeUpgradeableDependencies());
+            }
+
+            /* No further tests necessary because the method calls already tested methods. */
         }
 
         public class VisualizeUpgradeableDependenciesIPackageRepositoryFrameworkName

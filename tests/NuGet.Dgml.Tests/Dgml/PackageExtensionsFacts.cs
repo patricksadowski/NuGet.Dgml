@@ -9,7 +9,26 @@ namespace NuGet.Dgml
     {
         public class VisualizeUpgradeableDependenciesIPackageIPackageRepository
         {
-            /* No tests necessary because the method calls an tested overload. */
+            [Fact]
+            public void ThrowsOnNullPackage()
+            {
+                IPackage package = null;
+                var repository = StubPackageRepositoryFactory.Create(Enumerable.Empty<IPackage>());
+                Assert.Throws<ArgumentNullException>(
+                    "package",
+                    () => package.VisualizeUpgradeableDependencies(repository));
+            }
+
+            [Fact]
+            public void ThrowsOnNullPackageRepository()
+            {
+                var package = StubPackageFactory.CreatePackage("A", "1.0.0");
+                Assert.Throws<ArgumentNullException>(
+                    "packageRepository",
+                    () => package.VisualizeUpgradeableDependencies(null));
+            }
+
+            /* No further tests necessary because the method calls already tested methods. */
         }
 
         public class VisualizeUpgradeableDependenciesIPackageIPackageRepositoryFrameworkName
@@ -25,7 +44,7 @@ namespace NuGet.Dgml
             public void ThrowsOnNullPackage()
             {
                 IPackage package = null;
-                IPackageRepository repository = StubPackageRepositoryFactory.Create(Enumerable.Empty<IPackage>());
+                var repository = StubPackageRepositoryFactory.Create(Enumerable.Empty<IPackage>());
                 Assert.Throws<ArgumentNullException>(
                     "package",
                     () => package.VisualizeUpgradeableDependencies(repository, _targetFramework));
@@ -34,7 +53,7 @@ namespace NuGet.Dgml
             [Fact]
             public void ThrowsOnNullPackageRepository()
             {
-                IPackage package = StubPackageFactory.CreatePackage("A", "1.0.0");
+                var package = StubPackageFactory.CreatePackage("A", "1.0.0");
                 Assert.Throws<ArgumentNullException>(
                     "packageRepository",
                     () => package.VisualizeUpgradeableDependencies(null, _targetFramework));
@@ -43,8 +62,8 @@ namespace NuGet.Dgml
             [Fact]
             public void PackageIsNodeWithVersion()
             {
-                IPackage package = StubPackageFactory.CreatePackage("A", "1.0.0");
-                IPackageRepository repository = StubPackageRepositoryFactory.Create(Enumerable.Empty<IPackage>());
+                var package = StubPackageFactory.CreatePackage("A", "1.0.0");
+                var repository = StubPackageRepositoryFactory.Create(Enumerable.Empty<IPackage>());
 
                 var directedGraph = package.VisualizeUpgradeableDependencies(repository, _targetFramework);
 

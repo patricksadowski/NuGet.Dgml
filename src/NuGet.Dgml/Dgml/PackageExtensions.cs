@@ -16,10 +16,9 @@ namespace NuGet.Dgml
         /// <returns>The graph of the upgradeable dependencies of the specified package.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="package"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="packageRepository"/> is <c>null</c>.</exception>
-        /// <seealso cref="UpgradeWalker"/>
-        /// <seealso cref="PackageUpgradeVisualizer"/>
+        /// <seealso cref="VisualizeUpgradeableDependencies(IPackage, IPackageRepository, FrameworkName)"/>
         public static DirectedGraph VisualizeUpgradeableDependencies(this IPackage package, IPackageRepository packageRepository)
-            => VisualizeUpgradeableDependencies(package, packageRepository);
+            => VisualizeUpgradeableDependencies(package, packageRepository, null);
 
         /// <summary>
         /// Visualizes the upgradeable dependencies of the specified package.
