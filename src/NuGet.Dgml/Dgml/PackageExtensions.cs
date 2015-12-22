@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Versioning;
 
 namespace NuGet.Dgml
@@ -29,28 +30,14 @@ namespace NuGet.Dgml
         /// <returns>The graph of the upgradeable dependencies of the specified package.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="package"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="packageRepository"/> is <c>null</c>.</exception>
-        /// <seealso cref="UpgradeWalker"/>
-        /// <seealso cref="PackageUpgradeVisualizer"/>
+        /// <seealso cref="IEnumerableIPackageExtensions.VisualizeUpgradeableDependencies(IEnumerable{IPackage}, IPackageRepository, FrameworkName)"/>
         public static DirectedGraph VisualizeUpgradeableDependencies(
             this IPackage package,
             IPackageRepository packageRepository,
             FrameworkName targetFramework)
         {
-            if (package == null)
-            {
-                throw new ArgumentNullException(nameof(package));
-            }
-
-            var walker = new UpgradeWalker(packageRepository, targetFramework);
-
-            var directedGraphFactory = new DirectedGraphFactory();
-            var directedGraph = directedGraphFactory.CreateDependencyGraph();
-            var visualizer = new PackageUpgradeVisualizer(directedGraph);
-
-            var upgrades = walker.GetPackageUpgrades(package);
-            visualizer.Visualize(package, upgrades);
-
-            return directedGraph;
+            var packages = new[] { package, };
+            return packages.VisualizeUpgradeableDependencies(packageRepository, targetFramework);
         }
     }
 }
