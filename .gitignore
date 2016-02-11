@@ -19,6 +19,7 @@ x64/
 x86/
 build/*
 !build/*.msbuild
+!build/packages.config
 bld/
 [Bb]in/
 [Oo]bj/
@@ -33,6 +34,9 @@ bld/
 # NUNIT
 *.VisualState.xml
 TestResult.xml
+
+# NuGet
+[Nn]u[Gg]et.exe
 
 # Build Results of an ATL Project
 [Dd]ebugPS/

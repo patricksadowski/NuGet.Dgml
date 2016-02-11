@@ -4,34 +4,33 @@
     <Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
   </PropertyGroup>
   <PropertyGroup>
-    <RootDir Condition="'$(RootDir)' == '' Or '$(RootDir)' == '*Undefined*'">$(MSBuildProjectDirectory)\..\</RootDir>
-    <SolutionName Condition="'$(SolutionName)' == ''">NuGet.Dgml.sln</SolutionName>
-    <SolutionPath Condition="'$(SolutionPath)' == ''">$(RootDir)\$(SolutionName)</SolutionPath>
-    <SourceDir Condition="'$(SourceDir)' == ''">$(RootDir)\src</SourceDir>
-    <TestsDir Condition="'$(TestsDir)' == ''">$(RootDir)\tests</TestsDir>
+    <RootDir>$(MSBuildProjectDirectory)\..</RootDir>
+    <SolutionName>NuGet.Dgml.sln</SolutionName>
+    <SolutionPath>$(RootDir)\$(SolutionName)</SolutionPath>
+    <SourceDir>$(RootDir)\src</SourceDir>
+    <TestsDir>$(RootDir)\tests</TestsDir>
     <TestResultsDir Condition="'$(TestResultsDir)' == ''">$(TestsDir)\TestResults</TestResultsDir>
     <PackagesDir Condition="'$(PackagesDir)' == ''">$(RootDir)\packages</PackagesDir>
-    <ToolsDir Condition="'$(ToolsDir)' == ''">$(RootDir)\build</ToolsDir>
-    <NuGetExePath Condition="'$(NuGetExePath)' == ''">$(ToolsDir)\nuget.exe</NuGetExePath>
+    <ToolsDir Condition="'$(ToolsDir)' == ''">$(RootDir)\tools</ToolsDir>
+    <NuGetPath Condition="'$(NuGetPath)' == ''">$(ToolsDir)\nuget.exe</NuGetPath>
+    <GitVersionPath Condition="'$(GitVersionPath)' == ''">$(PackagesDir)\GitVersionTask.3.0.2\GitVersionTask.dll</GitVersionPath>
+    <xUnitRunnerPath Condition="'$(xUnitRunnerPath)' == ''">$(PackagesDir)\xunit.runner.console.2.1.0\tools\xunit.console.exe</xUnitRunnerPath>
+    <OpenCoverPath Condition="'$(OpenCoverPath)' == ''">$(PackagesDir)\OpenCover.4.6.519\tools\OpenCover.Console.exe</OpenCoverPath>
+    <ReportGeneratorPath Condition="'$(ReportGeneratorPath)' == ''">$(PackagesDir)\ReportGenerator.2.4.3.0\tools\ReportGenerator.exe</ReportGeneratorPath>
   </PropertyGroup>
-  <ItemGroup>
-    <NuspecFiles Include="$(SourceDir)\*\*.csproj" />
-  </ItemGroup>
-
-  <UsingTask
-      AssemblyFile="$(PackagesDir)\GitVersionTask.3.0.2\GitVersionTask.dll"
-      TaskName="GitVersionTask.GetVersion"/>
-  <UsingTask
-      AssemblyFile="$(PackagesDir)\xunit.runner.msbuild.2.0.0\build\portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.runner.msbuild.dll"
-      TaskName="Xunit.Runner.MSBuild.xunit"/>
 
   <!-- Targets -->
   <Target Name="Publish" DependsOnTargets="BuildAndTest;CreatePackages" />
   <Target Name="BuildAndTest" DependsOnTargets="Build;Test" />
 
   <Target Name="PackageRestore" DependsOnTargets="DownloadNuGet">
+    <PropertyGroup>
+      <BuildToolsPath>$(MSBuildProjectDirectory)\packages.config</BuildToolsPath>
+    </PropertyGroup>
+    <Message Text="Restoring build tools..." Importance="High" />
+    <Exec Command='"$(NuGetPath)" restore "$(BuildToolsPath)" -NonInteractive -OutputDirectory $(PackagesDir)' />
     <Message Text="Restoring NuGet packages..." Importance="High" />
-    <Exec Command='"$(NuGetExePath)" restore "$(SolutionPath)" -NonInteractive' />
+    <Exec Command='"$(NuGetPath)" restore "$(SolutionPath)" -NonInteractive -OutputDirectory $(PackagesDir)' />
   </Target>
 
   <Target Name="Build" DependsOnTargets="PackageRestore">
@@ -40,31 +39,51 @@
   </Target>
 
   <Target Name="Test">
-    <Message Text="Testing solution..." Importance="High" />
-    <MakeDir Directories="$(TestResultsDir)" />
     <ItemGroup>
       <TestAssemblies Include="$(TestsDir)\**\bin\$(Configuration)\*.Tests.dll" />
     </ItemGroup>
-    <xunit
-      Assemblies="@(TestAssemblies)"
-      SerializeTestCases="true"
-      Xml="$(TestResultsDir)\$(PROCESSOR_ARCHITECTURE).xml"
-      Html="$(TestResultsDir)\$(PROCESSOR_ARCHITECTURE).html" />
+    <PropertyGroup>
+      <xUnitRunnerArgs>@(TestAssemblies->'"%(FullPath)"', ' ') -noshadow -html "$(TestResultsDir)\TestResults.html"</xUnitRunnerArgs>
+      <CodeCoveragePath>$(TestResultsDir)\coverage.xml</CodeCoveragePath>
+      <OpenCoverFilter>+[NuGet.Dgml*]* -[*.Tests]*</OpenCoverFilter>
+      <OpenCoverArgs>-register:user -output:"$(CodeCoveragePath)" -filter:"$(OpenCoverFilter)" -returntargetcode -excludebyattribute:*.ExcludeFromCodeCoverage*;*.GeneratedCode*;*.CompilerGenerated*</OpenCoverArgs>
+    </PropertyGroup>
+    <Message Text="Testing solution..." Importance="High" />
+    <MakeDir Directories="$(TestResultsDir)" />
+    <Exec Command='"$(OpenCoverPath)" -target:"$(xUnitRunnerPath)" -targetargs:"$(xUnitRunnerArgs)" $(OpenCoverArgs)' />
+    <ReportGenerator ReportFiles="$(CodeCoveragePath)" TargetDirectory="$(TestResultsDir)" ReportTypes="Html;TextSummary" HistoryDirectory="$(TestResultsDir)" VerbosityLevel="Error" />
+    <Exec Command='type "$(TestResultsDir)\Summary.txt"' />
   </Target>
 
   <Target Name="CreatePackages">
+    <ItemGroup>
+      <NuspecFiles Include="$(SourceDir)\*\*.csproj" />
+    </ItemGroup>
     <Message Text="Creating NuGet packages..." Importance="High" />
     <GetVersion SolutionDirectory="$(RootDir)">
       <Output TaskParameter="NuGetVersion" PropertyName="GitVersion_NuGetVersion" />
     </GetVersion>
 
-    <Exec Command='"$(NuGetExePath)" pack "%(NuspecFiles.Identity)" -NonInteractive -Properties Configuration=$(Configuration) -Version $(GitVersion_NuGetVersion)' />
+    <Exec Command='"$(NuGetPath)" pack "%(NuspecFiles.Identity)" -NonInteractive -Properties Configuration=$(Configuration) -Version $(GitVersion_NuGetVersion)' />
   </Target>
 
-  <Target Name="DownloadNuGet">
-    <MakeDir Directories="$(ToolsDir)" />
-    <DownloadFile FileName="$(NuGetExePath)" Address="https://www.nuget.org/nuget.exe" Condition="!Exists('$(NuGetExePath)')" />
+  <Target Name="DownloadNuGet" Condition="!Exists('$(NuGetPath)')">
+    <PropertyGroup>
+      <NuGetDir>$([System.IO.Directory]::GetParent($(NuGetPath)))</NuGetDir>
+    </PropertyGroup>
+    <Message Text="Downloading NuGet.exe..." Importance="High" />
+    <MakeDir Directories="$(NuGetDir)" />
+    <DownloadFile FileName="$(NuGetPath)" Address="https://www.nuget.org/nuget.exe" />
   </Target>
+
+  <!-- Tasks -->
+  <UsingTask
+    AssemblyFile="$(GitVersionPath)"
+    TaskName="GitVersionTask.GetVersion"/>
+
+  <UsingTask
+    AssemblyFile="$(ReportGeneratorPath)"
+    TaskName="ReportGenerator" />
 
   <UsingTask TaskName="DownloadFile" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v12.0.dll">
     <ParameterGroup>
