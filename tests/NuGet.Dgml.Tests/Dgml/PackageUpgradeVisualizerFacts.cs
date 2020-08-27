@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using NuGet.Packaging.Core;
 using Xunit;
 
 namespace NuGet.Dgml
@@ -10,18 +11,14 @@ namespace NuGet.Dgml
         {
             [Fact]
             public void ThrowsOnNull()
-            {
-                Assert.Throws<ArgumentNullException>("directedGraph", () => new PackageUpgradeVisualizer(null));
-            }
+                => Assert.Throws<ArgumentNullException>("directedGraph", () => new PackageUpgradeVisualizer(null));
         }
 
         public class ConstructorDirectedGraphPackageUpgradePalette
         {
             [Fact]
             public void ThrowsOnNullDirectedGraph()
-            {
-                Assert.Throws<ArgumentNullException>("directedGraph", () => new PackageUpgradeVisualizer(null, new PackageUpgradePalette()));
-            }
+                => Assert.Throws<ArgumentNullException>("directedGraph", () => new PackageUpgradeVisualizer(null, new PackageUpgradePalette()));
 
             [Fact]
             public void ThrowsOnNullPackageUpgradePalette()
@@ -44,9 +41,7 @@ namespace NuGet.Dgml
 
             [Fact]
             public void ThrowsOnNullPackage()
-            {
-                Assert.Throws<ArgumentNullException>("package", () => _visualizer.Visualize(null, Enumerable.Empty<PackageUpgrade>()));
-            }
+                => Assert.Throws<ArgumentNullException>("package", () => _visualizer.Visualize(null, Enumerable.Empty<PackageUpgrade>()));
 
             [Fact]
             public void AcceptsNullUpgrades()
@@ -55,7 +50,7 @@ namespace NuGet.Dgml
 
                 _visualizer.Visualize(package, null);
 
-                Assert.Equal(1, _directedGraph.Nodes.Length);
+                Assert.Single(_directedGraph.Nodes);
                 Assert.Null(_directedGraph.Links);
             }
 
@@ -205,7 +200,7 @@ namespace NuGet.Dgml
 
                 _visualizer.Visualize(package, new[] { packageUpgrade, });
 
-                Assert.Equal("[1.0.0]", _directedGraph.Links[0].Label);
+                Assert.Equal("[1.0.0, 1.0.0]", _directedGraph.Links[0].Label);
             }
 
             [Fact]
@@ -227,26 +222,19 @@ namespace NuGet.Dgml
                 Assert.Equal(expected, _directedGraph.Links[0].Stroke);
             }
 
-            private static IPackage CreatePackage()
-            {
-                return StubPackageFactory.CreatePackage("A", "1.2.4");
-            }
+            private static PackageIdentity CreatePackage() => StubPackageFactory.CreatePackage("A", "1.2.4");
 
             private static PackageUpgrade CreatePackageUpgradeWithoutPackage()
-            {
-                return new PackageUpgrade(
+                => new PackageUpgrade(
                     StubPackageDependencyFactory.CreateExact("C", "2.2.0"),
                     PackageUpgradeAction.None,
                     null);
-            }
 
             private static PackageUpgrade CreatePackageUpgradeWithPackage()
-            {
-                return new PackageUpgrade(
+                => new PackageUpgrade(
                     StubPackageDependencyFactory.CreateExact("B", "1.0.0"),
                     PackageUpgradeAction.None,
                     StubPackageFactory.CreatePackage("B", "1.1.0"));
-            }
         }
     }
 }

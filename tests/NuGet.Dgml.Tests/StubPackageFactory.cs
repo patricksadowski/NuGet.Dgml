@@ -1,28 +1,30 @@
-﻿using NSubstitute;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using NuGet.Packaging.Core;
+using NuGet.Versioning;
 
 namespace NuGet
 {
     internal static class StubPackageFactory
     {
-        internal static IEnumerable<IPackage> CreatePackages(string id, params string[] versions)
-            => versions.Select(version => CreatePackage(id, version));
-
-        internal static IPackage CreatePackage(string id, string version)
-            => CreatePackage(id, version, Enumerable.Empty<PackageDependency>());
-
-        internal static IPackage CreatePackage(string id, string version, PackageDependency packageDependency)
-            => CreatePackage(id, version, new[] { packageDependency, });
-
-        internal static IPackage CreatePackage(string id, string version, IEnumerable<PackageDependency> packageDependencies)
+        internal static IEnumerable<PackageDependencyInfo> CreatePackages(string id, params string[] versions)
         {
-            var package = Substitute.For<IPackage>();
-            package.Id.Returns(id);
-            package.Version.Returns(new SemanticVersion(version));
-            var packageDependencySet = new PackageDependencySet(null, packageDependencies);
-            package.DependencySets.Returns(new[] { packageDependencySet, });
-            return package;
+            return versions.Select(version => CreatePackage(id, version));
+        }
+
+        internal static PackageDependencyInfo CreatePackage(string id, string version)
+        {
+            return CreatePackage(id, version, Enumerable.Empty<PackageDependency>());
+        }
+
+        internal static PackageDependencyInfo CreatePackage(string id, string version, params PackageDependency[] packageDependencies)
+        {
+            return CreatePackage(id, version, (IEnumerable<PackageDependency>)packageDependencies);
+        }
+
+        internal static PackageDependencyInfo CreatePackage(string id, string version, IEnumerable<PackageDependency> packageDependencies)
+        {
+            return new PackageDependencyInfo(id, new NuGetVersion(version), packageDependencies);
         }
     }
 }

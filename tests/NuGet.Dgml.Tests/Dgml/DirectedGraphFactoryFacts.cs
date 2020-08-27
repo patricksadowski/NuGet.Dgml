@@ -4,30 +4,15 @@ namespace NuGet.Dgml
 {
     public class DirectedGraphFactoryFacts
     {
-        private readonly DirectedGraphFactory _factory;
-
-        protected DirectedGraphFactory Factory
-        {
-            get
-            {
-                return _factory;
-            }
-        }
-
-        public DirectedGraphFactoryFacts()
-        {
-            _factory = new DirectedGraphFactory();
-        }
-
-        public class Create : DirectedGraphFactoryFacts
+        public class Create
         {
             [Fact]
             public void AppliesParametersToDirectedGraph()
             {
-                LayoutEnum layout = LayoutEnum.DependencyMatrix;
-                GraphDirectionEnum graphDirection = GraphDirectionEnum.BottomToTop;
+                var layout = LayoutEnum.DependencyMatrix;
+                var graphDirection = GraphDirectionEnum.BottomToTop;
 
-                var directedGraph = Factory.Create(layout, graphDirection);
+                var directedGraph = DirectedGraphFactory.Create(layout, graphDirection);
 
                 Assert.Equal(layout, directedGraph.Layout);
                 Assert.True(directedGraph.LayoutSpecified);
@@ -36,14 +21,11 @@ namespace NuGet.Dgml
             }
         }
 
-        public class CreateDependencyGraph : DirectedGraphFactoryFacts
+        public class CreateDependencyGraph
         {
             private readonly DirectedGraph _directedGraph;
 
-            public CreateDependencyGraph()
-            {
-                _directedGraph = Factory.CreateDependencyGraph();
-            }
+            public CreateDependencyGraph() => _directedGraph = DirectedGraphFactory.CreateDependencyGraph();
 
             [Fact]
             public void LayoutIsSugiyama()

@@ -12,10 +12,7 @@ namespace NuGet.Dgml
         /// <summary>
         /// Initializes a new instance of the <see cref="PackageUpgradeActionPalette"/> class.
         /// </summary>
-        public PackageUpgradeActionPalette()
-        {
-            _colors = new Dictionary<PackageUpgradeAction, string>();
-        }
+        public PackageUpgradeActionPalette() => _colors = new Dictionary<PackageUpgradeAction, string>();
 
         /// <summary>
         /// Gets or sets the color of the specified <see cref="PackageUpgradeAction"/>.
@@ -26,14 +23,10 @@ namespace NuGet.Dgml
         {
             get
             {
-                string color;
-                _colors.TryGetValue(action, out color);
+                _colors.TryGetValue(action, out var color);
                 return color;
             }
-            set
-            {
-                _colors[action] = value;
-            }
+            set => _colors[action] = value;
         }
     }
 }

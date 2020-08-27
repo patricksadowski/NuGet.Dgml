@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using Xunit;
 
 namespace NuGet.Dgml
@@ -22,10 +21,12 @@ namespace NuGet.Dgml
             [Fact]
             public void GeneratesXDocument()
             {
-                DirectedGraph graph = new DirectedGraph();
-                graph.Nodes = new[] { new DirectedGraphNode(), };
+                var graph = new DirectedGraph
+                {
+                    Nodes = new[] { new DirectedGraphNode(), }
+                };
                 var document = graph.AsXDocument();
-                Assert.Equal(1, document.Root.Elements().Count());
+                Assert.Single(document.Root.Elements());
             }
         }
     }
