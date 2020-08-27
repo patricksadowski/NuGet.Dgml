@@ -3,7 +3,6 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>NuGet</RootNamespace>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
     <Description>DGML creator for NuGet package repositories and packages.</Description>
   </PropertyGroup>
 
@@ -23,6 +22,10 @@
     <PackageReference Include="GitVersionTask" Version="3.0.2">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="NuGet.Core" Version="2.8.6" />
   </ItemGroup>
