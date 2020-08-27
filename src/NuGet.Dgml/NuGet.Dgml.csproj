@@ -1,9 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net45</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>NuGet</RootNamespace>
-    <DocumentationFile>NuGet.Dgml.xml</DocumentationFile>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <Description>DGML creator for NuGet package repositories and packages.</Description>
   </PropertyGroup>
