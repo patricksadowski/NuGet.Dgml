@@ -1,15 +1,20 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{337F3F25-316E-445B-A78C-A70B1C21ECC8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{E3D06EAF-9EA3-4F48-9D4F-FE667F0331C6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuGet.Dgml", "src\NuGet.Dgml\NuGet.Dgml.csproj", "{2CDA2E10-CEC5-4AB9-9D95-3EA31BA6755B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuGet.Dgml", "src\NuGet.Dgml\NuGet.Dgml.csproj", "{2CDA2E10-CEC5-4AB9-9D95-3EA31BA6755B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuGet.Dgml.Tests", "tests\NuGet.Dgml.Tests\NuGet.Dgml.Tests.csproj", "{FD97D5AB-BAEE-46B1-BA57-A8B489582D9B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuGet.Dgml.Tests", "tests\NuGet.Dgml.Tests\NuGet.Dgml.Tests.csproj", "{FD97D5AB-BAEE-46B1-BA57-A8B489582D9B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{976589CE-6D42-45DB-A932-3614247451E4}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,5 +37,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{2CDA2E10-CEC5-4AB9-9D95-3EA31BA6755B} = {337F3F25-316E-445B-A78C-A70B1C21ECC8}
 		{FD97D5AB-BAEE-46B1-BA57-A8B489582D9B} = {E3D06EAF-9EA3-4F48-9D4F-FE667F0331C6}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {30DD3AEB-C0F4-4D13-8F4C-5F146E8950C4}
 	EndGlobalSection
 EndGlobal
