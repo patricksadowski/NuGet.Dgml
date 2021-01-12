@@ -8,10 +8,7 @@ namespace NuGet.Dgml
         {
             private readonly PackageUpgradeActionPalette _palette;
 
-            public Indexer()
-            {
-                _palette = new PackageUpgradeActionPalette();
-            }
+            public Indexer() => _palette = new PackageUpgradeActionPalette();
 
             [Theory]
             [InlineData(PackageUpgradeAction.PrereleaseToPrerelease)]

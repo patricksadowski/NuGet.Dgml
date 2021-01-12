@@ -5,40 +5,38 @@ dependencies of NuGet packages leveraging directed graphs
 ([DGML](https://en.wikipedia.org/wiki/DGML)).
 
 The library was indented to manage and maintain local repositories at home or
-office.
+in business. It's not recommended to execute the functions against a large
+repository like <nuget.org>.
 
-# Usage
-
-*Note:* Due some limitations of
-[NuGet.Core](http://www.nuget.org/packages/NuGet.Core/) it's not recommended
-to execute the functions against a large repository like [nuget.org]().
-Many functions have to investigate a whole package repository!
+## Usage
 
 You only have to import the namespace *NuGet.Dgml* and look for new extension
 methods on the NuGet types.
 
-Sample:
-```c#
-using NuGet;
-using NuGet.Dgml;
+### Sample:
 
-var repository = PackageRepositoryFactory.Default.CreateRepository(@"N:\My Package Repository\");
-var directedGraph = repository.VisualizeUpgradeableDependencies();
+```c#
+using NuGet.Dgml;
+using NuGet.Protocol;
+using NuGet.Protocol.Core.Types;
+
+var repository = Repository.Factory.GetCoreV3(@"N:\My Package Repository\");
+var directedGraph = await repository.VisualizeUpgradeableDependenciesAsync().ConfigureAwait(false);
 directedGraph.AsXDocument().Save(@"C:\My Package Repository.dgml");
 ```
-# Functions
 
-The functions are implemented as extension methods. These methods use public
-types included in the library.
+## Functions
 
-| Extension method for type: | IPackageRepository | IPackage |
+The functions are implemented as extension methods. Every part of the library is public.
+
+| Extension method for type: | SourceRepository | PackageIdentity |
 |:--|:-:|:-:|
 | VisualizeUpgradeableDependencies | Implemented  | Implemented |
 
-# Applications supporting DGML
+## Applications supporting DGML
 
 - Visual Studio 2010(+): viewer and visual editor
 
-# Contributing
+## Contributing
 
 Just follow the [GitHub Flow](https://guides.github.com/introduction/flow/).

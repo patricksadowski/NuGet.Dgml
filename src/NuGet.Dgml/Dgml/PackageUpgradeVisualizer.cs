@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using NuGet.Packaging.Core;
 
 namespace NuGet.Dgml
 {
@@ -34,17 +35,8 @@ namespace NuGet.Dgml
         /// </exception>
         public PackageUpgradeVisualizer(DirectedGraph directedGraph, PackageUpgradePalette palette)
         {
-            if (directedGraph == null)
-            {
-                throw new ArgumentNullException(nameof(directedGraph));
-            }
-            if (palette == null)
-            {
-                throw new ArgumentNullException(nameof(palette));
-            }
-
-            _directedGraph = directedGraph;
-            _palette = palette;
+            _directedGraph = directedGraph ?? throw new ArgumentNullException(nameof(directedGraph));
+            _palette = palette ?? throw new ArgumentNullException(nameof(palette));
         }
 
         /// <summary>
@@ -53,12 +45,10 @@ namespace NuGet.Dgml
         /// <param name="package">The package to visualize.</param>
         /// <param name="upgrades">The upgrades of the specified package.</param>
         /// <exception cref="ArgumentNullException"><paramref name="package"/> is <c>null</c>.</exception>
-        public void Visualize(IPackage package, IEnumerable<PackageUpgrade> upgrades)
+        public void Visualize(PackageIdentity package, IEnumerable<PackageUpgrade> upgrades)
         {
             if (package == null)
-            {
                 throw new ArgumentNullException(nameof(package));
-            }
 
             var packageNode = EnsurePackageNode(package);
             ConfigurePackageNode(packageNode, package);
@@ -75,31 +65,30 @@ namespace NuGet.Dgml
             }
         }
 
-        private DirectedGraphNode EnsurePackageNode(IPackage package)
+        private DirectedGraphNode EnsurePackageNode(PackageIdentity package)
         {
             var nodeId = GetNodeId(package);
             return EnsureNode(nodeId);
         }
 
-        private void ConfigurePackageNode(DirectedGraphNode node, IPackage package)
+        private void ConfigurePackageNode(DirectedGraphNode node, PackageIdentity package)
         {
-            if (!package.IsReleaseVersion())
-            {
+            if (package.Version.IsPrerelease)
                 node.Background = _palette.PrereleaseColor;
-            }
         }
 
         private DirectedGraphNode EnsureDependencyNode(PackageUpgrade upgrade)
         {
-            string nodeId = GetNodeId(upgrade);
+            var nodeId = GetNodeId(upgrade);
             return EnsureNode(nodeId);
         }
 
-        private static string GetNodeId(PackageUpgrade upgrade) => upgrade.Package != null
+        private static string GetNodeId(PackageUpgrade upgrade)
+            => upgrade.Package != null
                 ? GetNodeId(upgrade.Package)
                 : GetNodeId(upgrade.PackageDependency);
 
-        private static string GetNodeId(IPackage package) => package.GetFullName();
+        private static string GetNodeId(PackageIdentity package) => $"{package.Id} {package.Version}";
 
         private static string GetNodeId(PackageDependency packageDependency) => packageDependency.Id;
 
@@ -121,19 +110,16 @@ namespace NuGet.Dgml
         private void EnsureNodes()
         {
             if (_directedGraph.Nodes == null)
+                _directedGraph.Nodes = Array.Empty<DirectedGraphNode>();
+        }
+
+        private DirectedGraphNode GetNode(string packageId) => _directedGraph.Nodes.FirstOrDefault(n => packageId.Equals(n.Id, StringComparison.Ordinal));
+
+        private static DirectedGraphNode CreateNode(string packageId)
+            => new DirectedGraphNode
             {
-                _directedGraph.Nodes = new DirectedGraphNode[0];
-            }
-        }
-
-        private DirectedGraphNode GetNode(string packageId) => _directedGraph.Nodes.FirstOrDefault(n => packageId.Equals(n.Id));
-
-        private DirectedGraphNode CreateNode(string packageId)
-        {
-            var node = new DirectedGraphNode();
-            node.Id = packageId;
-            return node;
-        }
+                Id = packageId,
+            };
 
         private void AddNode(DirectedGraphNode node)
         {
@@ -155,9 +141,11 @@ namespace NuGet.Dgml
 
         private DirectedGraphLink CreateLink(DirectedGraphNode source, DirectedGraphNode target)
         {
-            var link = new DirectedGraphLink();
-            link.Source = source.Id;
-            link.Target = target.Id;
+            var link = new DirectedGraphLink
+            {
+                Source = source.Id,
+                Target = target.Id,
+            };
             AddLink(link);
             return link;
         }
@@ -176,14 +164,12 @@ namespace NuGet.Dgml
         private void EnsureLinks()
         {
             if (_directedGraph.Links == null)
-            {
-                _directedGraph.Links = new DirectedGraphLink[0];
-            }
+                _directedGraph.Links = Array.Empty<DirectedGraphLink>();
         }
 
         private void ConfigureLink(DirectedGraphLink link, PackageUpgrade upgrade)
         {
-            link.Label = upgrade.PackageDependency.VersionSpec.ToString();
+            link.Label = upgrade.PackageDependency.VersionRange.ToString();
             link.Stroke = _palette.UpgradeActionPalette[upgrade.Action];
         }
     }

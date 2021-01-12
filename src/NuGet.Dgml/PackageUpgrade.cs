@@ -1,4 +1,6 @@
-﻿namespace NuGet
+﻿using NuGet.Packaging.Core;
+
+namespace NuGet
 {
     /// <summary>
     /// Specifies an upgrade of a <see cref="PackageDependency"/>.
@@ -11,7 +13,7 @@
         /// <param name="packageDependency">The package dependency affected by the upgrade.</param>
         /// <param name="action">The upgrade action of the package dependency.</param>
         /// <param name="package">The package that can be used to perform the upgrade action on the package dependency.</param>
-        public PackageUpgrade(PackageDependency packageDependency, PackageUpgradeAction action, IPackage package)
+        public PackageUpgrade(PackageDependency packageDependency, PackageUpgradeAction action, PackageIdentity package)
         {
             PackageDependency = packageDependency;
             Action = action;
@@ -21,34 +23,22 @@
         /// <summary>
         /// Gets the package dependency affected by the upgrade.
         /// </summary>
-        public PackageDependency PackageDependency
-        {
-            get;
-        }
+        public PackageDependency PackageDependency { get; }
 
         /// <summary>
         /// Gets the upgrade action of the package dependency.
         /// </summary>
-        public PackageUpgradeAction Action
-        {
-            get;
-        }
+        public PackageUpgradeAction Action { get; }
 
         /// <summary>
         /// Gets the package that can be used to perform the upgrade action on the package dependency.
         /// </summary>
-        public IPackage Package
-        {
-            get;
-        }
+        public PackageIdentity Package { get; }
 
         /// <summary>
         /// Returns a string that represents the current object.
         /// </summary>
         /// <returns>A string that represents the current object.</returns>
-        public override string ToString()
-        {
-            return $"{PackageDependency} {Action} -> {Package.GetFullName()}";
-        }
+        public override string ToString() => $"{PackageDependency} {Action} -> {Package.Id} {Package.Version}";
     }
 }

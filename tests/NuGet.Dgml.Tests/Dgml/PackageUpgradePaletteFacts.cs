@@ -19,9 +19,7 @@ namespace NuGet.Dgml
         {
             [Fact]
             public void ThrowsOnNull()
-            {
-                Assert.Throws<ArgumentNullException>("upgradeActionPalette", () => new PackageUpgradePalette(null));
-            }
+                => Assert.Throws<ArgumentNullException>("upgradeActionPalette", () => new PackageUpgradePalette(null));
         }
 
         public class PrereleaseColor

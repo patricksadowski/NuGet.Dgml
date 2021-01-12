@@ -1,4 +1,6 @@
-﻿namespace NuGet
+﻿using NuGet.Packaging.Core;
+
+namespace NuGet
 {
     /// <summary>
     /// Specifies how a <see cref="PackageDependency"/> can be upgraded.

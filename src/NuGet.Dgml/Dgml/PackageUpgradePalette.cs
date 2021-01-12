@@ -21,38 +21,21 @@ namespace NuGet.Dgml
         /// <param name="upgradeActionPalette">The palette to visualize a <see cref="PackageUpgradeAction"/>.</param>
         /// <exception cref="ArgumentNullException"><paramref name="upgradeActionPalette"/> is <c>null</c>.</exception>
         public PackageUpgradePalette(PackageUpgradeActionPalette upgradeActionPalette)
-        {
-            if (upgradeActionPalette == null)
-            {
-                throw new ArgumentNullException(nameof(upgradeActionPalette));
-            }
-            UpgradeActionPalette = upgradeActionPalette;
-        }
+            => UpgradeActionPalette = upgradeActionPalette ?? throw new ArgumentNullException(nameof(upgradeActionPalette));
 
         /// <summary>
         /// Gets or sets the color of a prerelease package.
         /// </summary>
-        public string PrereleaseColor
-        {
-            get;
-            set;
-        }
+        public string PrereleaseColor { get; set; }
 
         /// <summary>
         /// Gets or sets the color of an undiscoverable package that is referenced by a package dependency.
         /// </summary>
-        public string MissingPackageColor
-        {
-            get;
-            set;
-        }
+        public string MissingPackageColor { get; set; }
 
         /// <summary>
         /// Gets the palette to visualize a <see cref="PackageUpgradeAction"/>.
         /// </summary>
-        public PackageUpgradeActionPalette UpgradeActionPalette
-        {
-            get;
-        }
+        public PackageUpgradeActionPalette UpgradeActionPalette { get; }
     }
 }

@@ -1,49 +1,43 @@
-﻿namespace NuGet
+﻿using NuGet.Packaging.Core;
+using NuGet.Versioning;
+
+namespace NuGet
 {
     internal static class StubPackageDependencyFactory
     {
         internal static PackageDependency CreateExact(string id, string version)
         {
-            var versionSpec = new VersionSpec(new SemanticVersion(version));
-            return new PackageDependency(id, versionSpec);
+            var versionRange = CreateVersionSpec(version, version, true, true);
+            return new PackageDependency(id, versionRange);
         }
 
         internal static PackageDependency Create(string id, string minVersion)
         {
-            var versionSpec = CreateVersionSpec(minVersion);
-            return new PackageDependency(id, versionSpec);
+            var versionRange = CreateVersionSpec(minVersion);
+            return new PackageDependency(id, versionRange);
         }
 
         internal static PackageDependency Create(string id, string minVersion, string maxVersion)
         {
-            var versionSpec = CreateVersionSpec(minVersion, maxVersion);
-            return new PackageDependency(id, versionSpec);
+            var versionRange = CreateVersionSpec(minVersion, maxVersion);
+            return new PackageDependency(id, versionRange);
         }
 
         internal static PackageDependency Create(string id, string minVersion, string maxVersion, bool isMinInclusive, bool isMaxInclusive)
         {
-            var versionSpec = CreateVersionSpec(minVersion, maxVersion, isMinInclusive, isMaxInclusive);
-            return new PackageDependency(id, versionSpec);
+            var versionRange = CreateVersionSpec(minVersion, maxVersion, isMinInclusive, isMaxInclusive);
+            return new PackageDependency(id, versionRange);
         }
 
-        private static IVersionSpec CreateVersionSpec(
-            string minVersion = null,
-            string maxVersion = null,
-            bool isMinInclusive = true,
-            bool isMaxInclusive = false)
+        private static VersionRange CreateVersionSpec(string minVersion = null, string maxVersion = null, bool includeMinVersion = true, bool includeMaxVersion = false)
         {
-            var versionSpec = new VersionSpec();
-            versionSpec.IsMaxInclusive = isMaxInclusive;
-            versionSpec.IsMinInclusive = isMinInclusive;
-            if (!string.IsNullOrWhiteSpace(maxVersion))
-            {
-                versionSpec.MaxVersion = new SemanticVersion(maxVersion);
-            }
-            if (!string.IsNullOrWhiteSpace(minVersion))
-            {
-                versionSpec.MinVersion = new SemanticVersion(minVersion);
-            }
-            return versionSpec;
+            NuGetVersion minNuGetVersion = null;
+            if (minVersion != null)
+                minNuGetVersion = new NuGetVersion(minVersion);
+            NuGetVersion maxNuGetVersion = null;
+            if (maxVersion != null)
+                maxNuGetVersion = new NuGetVersion(maxVersion);
+            return new VersionRange(minNuGetVersion, includeMinVersion, maxNuGetVersion, includeMaxVersion);
         }
     }
 }

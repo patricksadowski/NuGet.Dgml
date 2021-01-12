@@ -1,35 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Versioning;
+using System.Threading.Tasks;
+using NuGet.Frameworks;
+using NuGet.Packaging.Core;
+using NuGet.Protocol.Core.Types;
 
 namespace NuGet.Dgml
 {
     /// <summary>
-    /// Provides static extension methods for <see cref="IEnumerable{IPackage}"/>.
+    /// Provides static extension methods for <see cref="IEnumerable{PackageIdentity}"/>.
     /// </summary>
-    public static class IEnumerableIPackageExtensions
+    public static class IEnumerablePackageIdentityExtensions
     {
         /// <summary>
         /// Visualizes the upgradeable dependencies of the specified packages.
         /// </summary>
         /// <param name="packages">The packages.</param>
-        /// <param name="packageRepository">The repository to resolve package dependencies.</param>
+        /// <param name="repository">The repository to resolve package dependencies.</param>
         /// <returns>The graph of the upgradeable dependencies of the specified packages.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="packages"/> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException"><paramref name="packageRepository"/> is <c>null</c>.</exception>
-        /// <seealso cref="VisualizeUpgradeableDependencies(IEnumerable{IPackage}, IPackageRepository, FrameworkName)"/>
-        public static DirectedGraph VisualizeUpgradeableDependencies(this IEnumerable<IPackage> packages, IPackageRepository packageRepository)
-            => VisualizeUpgradeableDependencies(packages, packageRepository, null);
+        /// <exception cref="ArgumentNullException"><paramref name="repository"/> is <c>null</c>.</exception>
+        /// <seealso cref="VisualizeUpgradeableDependenciesAsync(IEnumerable{PackageIdentity}, SourceRepository, NuGetFramework)"/>
+        public static Task<DirectedGraph> VisualizeUpgradeableDependenciesAsync(this IEnumerable<PackageIdentity> packages, SourceRepository repository)
+            => VisualizeUpgradeableDependenciesAsync(packages, repository, NuGetFramework.AnyFramework);
 
         /// <summary>
         /// Visualizes the upgradeable dependencies of the specified packages.
         /// </summary>
         /// <param name="packages">The packages.</param>
-        /// <param name="packageRepository">The repository to resolve package dependencies.</param>
+        /// <param name="repository">The repository to resolve package dependencies.</param>
         /// <param name="targetFramework">The framework to find compatible package dependencies.</param>
         /// <returns>The graph of the upgradeable dependencies of the specified packages.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="packages"/> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException"><paramref name="packageRepository"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="repository"/> is <c>null</c>.</exception>
         /// <seealso cref="UpgradeWalker"/>
         /// <seealso cref="PackageUpgradeVisualizer"/>
         /// <remarks>
@@ -77,24 +80,19 @@ namespace NuGet.Dgml
         /// </item>
         /// </list>
         /// </remarks>
-        public static DirectedGraph VisualizeUpgradeableDependencies(
-            this IEnumerable<IPackage> packages,
-            IPackageRepository packageRepository,
-            FrameworkName targetFramework)
+        public static async Task<DirectedGraph> VisualizeUpgradeableDependenciesAsync(
+            this IEnumerable<PackageIdentity> packages,
+            SourceRepository repository,
+            NuGetFramework targetFramework)
         {
             if (packages == null)
-            {
                 throw new ArgumentNullException(nameof(packages));
-            }
-            if (packageRepository == null)
-            {
-                throw new ArgumentNullException(nameof(packageRepository));
-            }
+            if (repository == null)
+                throw new ArgumentNullException(nameof(repository));
 
-            var walker = new UpgradeWalker(packageRepository, targetFramework);
+            var walker = new UpgradeWalker(repository, targetFramework);
 
-            var directedGraphFactory = new DirectedGraphFactory();
-            var directedGraph = directedGraphFactory.CreateDependencyGraph();
+            var directedGraph = DirectedGraphFactory.CreateDependencyGraph();
 
             var packageUpgradeActionPalette = new PackageUpgradeActionPalette();
             packageUpgradeActionPalette[PackageUpgradeAction.None] = "Black";
@@ -105,15 +103,17 @@ namespace NuGet.Dgml
             packageUpgradeActionPalette[PackageUpgradeAction.ReleaseToPrerelease] = "Firebrick";
             packageUpgradeActionPalette[PackageUpgradeAction.Unknown] = "DarkGray";
 
-            var packageUpgradePalette = new PackageUpgradePalette(packageUpgradeActionPalette);
-            packageUpgradePalette.MissingPackageColor = "Red";
-            packageUpgradePalette.PrereleaseColor = "Gainsboro";
+            var packageUpgradePalette = new PackageUpgradePalette(packageUpgradeActionPalette)
+            {
+                MissingPackageColor = "Red",
+                PrereleaseColor = "Gainsboro",
+            };
 
             var visualizer = new PackageUpgradeVisualizer(directedGraph, packageUpgradePalette);
 
             foreach (var recentPackage in packages)
             {
-                var upgrades = walker.GetPackageUpgrades(recentPackage);
+                var upgrades = await walker.GetPackageUpgradesAsync(recentPackage).ConfigureAwait(false);
                 visualizer.Visualize(recentPackage, upgrades);
             }
 
