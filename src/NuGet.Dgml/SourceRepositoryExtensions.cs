@@ -31,19 +31,24 @@ namespace NuGet
             logger = logger ?? NullLogger.Instance;
 
             var packageSearch = await repository.GetResourceAsync<PackageSearchResource>(searchCancellationToken).ConfigureAwait(false);
-            var searchFilter = new SearchFilter(includePrerelease: true);
+            var searchFilter = new SearchFilter(true);
 
             var packages = new List<PackageIdentity>();
-            List<IPackageSearchMetadata> searchResults;
             const int batchSize = 50;
             var index = 0;
+            bool empty;
             do
             {
-                searchResults = (await packageSearch.SearchAsync("", searchFilter, skip: index, take: batchSize, logger, searchCancellationToken).ConfigureAwait(false)).ToList();
-                packages.AddRange(searchResults.Select(p => p.Identity));
-                index += batchSize;
+                var searchResults = await packageSearch.SearchAsync("", searchFilter, skip: index, take: batchSize, logger, searchCancellationToken).ConfigureAwait(false);
+                empty = true;
+                foreach (var identity in searchResults.Select(p => p.Identity))
+                {
+                    packages.Add(identity);
+                    empty = false;
+                    index++;
+                }
             }
-            while (searchResults.Count > 0);
+            while (!empty);
 
             return packages;
         }
